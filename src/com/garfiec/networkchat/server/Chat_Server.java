@@ -1,4 +1,4 @@
-package com.garfiec.networkedchat.server;
+package com.garfiec.networkchat.server;
 
 public class Chat_Server {
     public static void main(String[] args) {
