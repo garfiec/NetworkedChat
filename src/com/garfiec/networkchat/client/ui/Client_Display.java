@@ -6,6 +6,8 @@ import com.garfiec.networkchat.client.util.Chat_Client_Settings;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -14,9 +16,11 @@ public class Client_Display extends JFrame {
 
     JTextArea community_messages;
 
-    public Client_Display() {
+    public Client_Display(Chat_Client_Settings settings) {
         super(UI_Strings.GUI_TITLE);
         getContentPane().setLayout(new BorderLayout());
+
+        this.settings = settings;
 
         createMenu();
         createUI();
@@ -80,7 +84,7 @@ public class Client_Display extends JFrame {
         // Chat rooms control
         JPanel rooms_ctrl_panel = new JPanel(new BorderLayout());
         rooms_ctrl_panel.setBorder(new EmptyBorder(5, 5, 5, 5));
-        rooms_ctrl_panel.add(createChatRoomCtrls());
+        rooms_ctrl_panel.add(createUserList());
         ui_panel.add(rooms_ctrl_panel, BorderLayout.WEST);
 
         // Chat room itself
@@ -92,7 +96,7 @@ public class Client_Display extends JFrame {
         this.add(ui_panel, BorderLayout.CENTER);
     }
 
-    private JPanel createChatRoomCtrls() {
+    private JPanel createUserList() {
         JPanel panel = new JPanel(new BorderLayout());
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
@@ -103,7 +107,6 @@ public class Client_Display extends JFrame {
         listLabelPanel.add(userListLabel, BorderLayout.CENTER);
 
         ArrayList<String> mock_list = new ArrayList<>();
-        mock_list.add("Lobby");
         for (int i = 0; i < 20; i++) {
             mock_list.add(Integer.toString(i));
         }
@@ -126,8 +129,30 @@ public class Client_Display extends JFrame {
         panel.setBorder(new EmptyBorder(5, 5, 5, 5));
 
         // User name
-        JLabel user_name = new JLabel("<html><h3>Guest</h3></html>");
-        panel.add(user_name, BorderLayout.NORTH);
+        JPanel name_panel = new JPanel(new BorderLayout());
+        name_panel.setBorder(new EmptyBorder(5, 0, 5, 0));
+        JLabel user_name_label = new JLabel("Name ");
+        JTextField user_name_input = new JTextField(settings.user_name);
+        user_name_input.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                settings.user_name = user_name_input.getText();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                settings.user_name = user_name_input.getText();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                settings.user_name = user_name_input.getText();
+            }
+        });
+        name_panel.add(user_name_label, BorderLayout.WEST);
+        name_panel.add(user_name_input, BorderLayout.CENTER);
+
+
 
         // Community Messages
         JPanel community_messages_panel = new JPanel(new BorderLayout());
@@ -151,9 +176,16 @@ public class Client_Display extends JFrame {
         JPanel input_panel = new JPanel(new BorderLayout());
         input_panel.setBorder(new EmptyBorder(5, 0, 0, 0));
         JTextField user_input = new JTextField("Your message here");
-        user_input.addActionListener(e -> System.out.println("Enter pressed with msg: " + e.getActionCommand())); // TODO: Call message sender
+        user_input.addActionListener(e -> {
+            // TODO: Call message sender
+            if (!e.getActionCommand().equals("")) {
+                System.out.println("Enter pressed with msg: " + e.getActionCommand());
+            }
+            user_input.setText("");
+        });
         input_panel.add(user_input);
 
+        panel.add(name_panel, BorderLayout.NORTH);
         panel.add(community_messages_panel, BorderLayout.CENTER);
         panel.add(input_panel, BorderLayout.SOUTH);
         return panel;
