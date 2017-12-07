@@ -1,5 +1,6 @@
 package com.garfiec.networkchat.client.ui;
 
+import com.garfiec.networkchat.client.Chat_Client;
 import com.garfiec.networkchat.client.ui.etc.UI_Settings;
 import com.garfiec.networkchat.client.util.Chat_Client_Settings;
 
@@ -12,14 +13,17 @@ import java.awt.*;
 import java.util.ArrayList;
 
 public class Client_Display extends JFrame {
+    private Chat_Client          client;
     private Chat_Client_Settings settings;
 
+    JList users_list;
     JTextArea community_messages;
 
-    public Client_Display(Chat_Client_Settings settings) {
+    public Client_Display(Chat_Client client, Chat_Client_Settings settings) {
         super(UI_Strings.GUI_TITLE);
         getContentPane().setLayout(new BorderLayout());
 
+        this.client   = client;
         this.settings = settings;
 
         createMenu();
@@ -106,17 +110,14 @@ public class Client_Display extends JFrame {
         JLabel userListLabel = new JLabel(UI_Strings.USER_LIST_LABEL_TEXT);
         listLabelPanel.add(userListLabel, BorderLayout.CENTER);
 
-        ArrayList<String> mock_list = new ArrayList<>();
-        for (int i = 0; i < 20; i++) {
-            mock_list.add(Integer.toString(i));
-        }
-
         // List of Connected Users
         JPanel list_panel = new JPanel(new BorderLayout());
-        list_panel.setBorder(new LineBorder(new Color(147, 147, 147), 1));
-        JList users_list = new JList(mock_list.toArray());
+        JList users_list = new JList();
         users_list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
-        list_panel.add(users_list, BorderLayout.CENTER);
+        JScrollPane user_list_scroll = new JScrollPane(users_list);
+
+        this.users_list = users_list;
+        list_panel.add(user_list_scroll, BorderLayout.CENTER);
 
         panel.add(listLabelPanel, BorderLayout.NORTH);
         panel.add(list_panel, BorderLayout.CENTER);
@@ -152,8 +153,6 @@ public class Client_Display extends JFrame {
         name_panel.add(user_name_label, BorderLayout.WEST);
         name_panel.add(user_name_input, BorderLayout.CENTER);
 
-
-
         // Community Messages
         JPanel community_messages_panel = new JPanel(new BorderLayout());
         community_messages_panel.setBorder(new EmptyBorder(0, 0, 5, 0));
@@ -177,9 +176,8 @@ public class Client_Display extends JFrame {
         input_panel.setBorder(new EmptyBorder(5, 0, 0, 0));
         JTextField user_input = new JTextField("Your message here");
         user_input.addActionListener(e -> {
-            // TODO: Call message sender
             if (!e.getActionCommand().equals("")) {
-                System.out.println("Enter pressed with msg: " + e.getActionCommand());
+                this.client.sendMessage(e.getActionCommand());
             }
             user_input.setText("");
         });
@@ -195,5 +193,11 @@ public class Client_Display extends JFrame {
     public void appendMessage(String msg) {
         this.community_messages.append(msg);
         this.community_messages.setCaretPosition(this.community_messages.getDocument().getLength());
+    }
+
+    // Updates the list of users online
+    public void updateUsers(ArrayList<String> users) {
+        users_list.clearSelection();
+        users_list.setListData(users.toArray());
     }
 }
