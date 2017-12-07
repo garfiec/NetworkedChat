@@ -15,7 +15,7 @@ public class Chat_Server {
 		// Public key is (e, n), Private is (d, n). Let's print them to find out what they are
 		System.out.println(String.format("e:%d d:%d n:%d", k.e, k.d, k.n));
 		// Let's encrypt our secret message using our public key (this method doesn't care about k.d)
-		ArrayList<BigInteger> enc = c.encrypt("Meet me outside SCE at 10pm...", k);
+		ArrayList<BigInteger> enc = c.encrypt("Meet me outside SCE at 10pm. I will be waiting for you, so please don't take long. hahahahahahaha here are some numbers too 53427593857 maybe a % and a \\ too. Can you handle newlines too?\nBet", k);
 		// Now let's decrypt it!! This method doesn't care about k.e
 		String dec = c.decrypt(enc, k);
 		// Print what we encrypted. Hopefully it's the same thing
