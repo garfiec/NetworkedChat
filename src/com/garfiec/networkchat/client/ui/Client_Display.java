@@ -10,15 +10,21 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.util.ArrayList;
 
 public class Client_Display extends JFrame {
     private Chat_Client          client;
     private Chat_Client_Config settings;
 
-    private JList     users_list;
-    private JTextArea community_messages;
-    private JLabel    statusLabel;
+    private JList      users_list;
+    private JTextField user_name_input;
+    private JTextArea  community_messages;
+    private JTextField user_message;
+    private JLabel     statusLabel;
+
+    private boolean enter_msg_helper;
 
     public Client_Display(Chat_Client client, Chat_Client_Config settings) {
         super(UI_Strings.GUI_TITLE);
@@ -31,11 +37,21 @@ public class Client_Display extends JFrame {
         createUI();
         createStatusBar();
 
-        setStatus("Disconnected");
+        resetUIElements();
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(UI_Constants.WIDTH, UI_Constants.HEIGHT);
         setVisible(true);
+    }
+
+    private void resetUIElements() {
+        this.updateUsers(new ArrayList<>());
+        this.user_name_input.setText(this.settings.user_name);
+        this.clearChat();
+        this.setStatus("Disconnected");
+        this.enter_msg_helper = true;
+        this.user_message.setText("Your message here");
+        this.user_message.setForeground(UI_Constants.USER_MESSAGE_HELP_COLOR);
     }
 
     private void createMenu() {
@@ -140,7 +156,7 @@ public class Client_Display extends JFrame {
         JPanel name_panel = new JPanel(new BorderLayout());
         name_panel.setBorder(UI_Constants.VERTICAL_PADDING);
         JLabel user_name_label = new JLabel("Name ");
-        JTextField user_name_input = new JTextField(settings.user_name);
+        user_name_input = new JTextField(settings.user_name);
         user_name_input.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
@@ -172,14 +188,36 @@ public class Client_Display extends JFrame {
         // Input message
         JPanel input_panel = new JPanel(new BorderLayout());
         input_panel.setBorder(UI_Constants.TOP_PADDING);
-        JTextField user_input = new JTextField("Your message here");
-        user_input.addActionListener(e -> {
+        user_message = new JTextField();
+        user_message.addActionListener(e -> {
             if (!e.getActionCommand().equals("")) {
                 this.client.sendMessage(e.getActionCommand());
             }
-            user_input.setText("");
+            user_message.setText("");
         });
-        input_panel.add(user_input);
+        user_message.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) { }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                if (enter_msg_helper) {
+                    user_message.setText("");
+                    user_message.setForeground(UI_Constants.USER_MESSAGE_COLOR);
+                    enter_msg_helper = false;
+                }
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) { }
+
+            @Override
+            public void mouseEntered(MouseEvent e) { }
+
+            @Override
+            public void mouseExited(MouseEvent e) { }
+        });
+        input_panel.add(user_message);
 
         panel.add(name_panel, BorderLayout.NORTH);
         panel.add(community_messages_panel, BorderLayout.CENTER);
@@ -189,6 +227,10 @@ public class Client_Display extends JFrame {
 
     public void messageBox(String msg) {
         JOptionPane.showMessageDialog(this, msg);
+    }
+
+    public void clearChat() {
+        this.community_messages.setText("");
     }
 
     // Adds a message to the end of chat room

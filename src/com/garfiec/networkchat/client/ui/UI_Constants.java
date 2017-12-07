@@ -1,11 +1,14 @@
 package com.garfiec.networkchat.client.ui;
 
 import javax.swing.border.EmptyBorder;
+import java.awt.*;
 
 public class UI_Constants {
     public static final int WIDTH   = 900;
     public static final int HEIGHT  = 500;
 
+    public static final Color USER_MESSAGE_COLOR =  new Color(0, 0, 0);
+    public static final Color USER_MESSAGE_HELP_COLOR = new Color(120, 120, 120);
 
     public static final int STD_PAD = 5;
     public static final EmptyBorder STANDARD_PADDING = new EmptyBorder(STD_PAD, STD_PAD, STD_PAD, STD_PAD);

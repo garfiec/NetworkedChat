@@ -40,7 +40,7 @@ public class UI_ConnectServer extends JFrame {
         JPanel connection_settings_panel = new JPanel();
         SpringLayout connection_settings_layout = new SpringLayout();
         connection_settings_panel.setLayout(connection_settings_layout);
-        connection_settings_panel.setBorder(BorderFactory.createTitledBorder("Connection Settings"));
+        connection_settings_panel.setBorder(BorderFactory.createTitledBorder("Server Details"));
 
         // IP
         JPanel server_ip_panel = new JPanel(new BorderLayout());
