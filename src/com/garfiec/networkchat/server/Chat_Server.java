@@ -3,8 +3,27 @@ import com.garfiec.networkchat.common.Crypt_RSA;
 import com.garfiec.networkchat.common.Crypt_RSA.Keys;
 import java.util.ArrayList;
 import java.math.BigInteger;
+import java.util.HashMap;
 
 public class Chat_Server {
+	// Placeholder vars
+	HashMap<Integer, String> users; // <port (user identifier), socket>
+
+	public Chat_Server() {
+		users = new HashMap<>();
+
+	}
+
+	// Todo: Receive object and handle respective operations
+	public void receiveData(int data) {
+
+	}
+
+	// Todo: construct transmissible object to user or users
+	public void sendData(int data) {
+
+	}
+
     public static void main(String[] args) {
         System.out.println("Running chat server");
         Chat_Server chat_server = new Chat_Server();

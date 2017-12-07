@@ -2,7 +2,7 @@ package com.garfiec.networkchat.client.ui;
 
 import com.garfiec.networkchat.client.Chat_Client;
 import com.garfiec.networkchat.client.ui.etc.UI_ConnectServer;
-import com.garfiec.networkchat.client.util.Chat_Client_Settings;
+import com.garfiec.networkchat.client.util.Chat_Client_Config;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 
 public class Client_Display extends JFrame {
     private Chat_Client          client;
-    private Chat_Client_Settings settings;
+    private Chat_Client_Config settings;
 
     private JList     users_list;
     private JTextArea community_messages;
     private JLabel    statusLabel;
 
-    public Client_Display(Chat_Client client, Chat_Client_Settings settings) {
+    public Client_Display(Chat_Client client, Chat_Client_Config settings) {
         super(UI_Strings.GUI_TITLE);
         getContentPane().setLayout(new BorderLayout());
 
@@ -30,6 +30,8 @@ public class Client_Display extends JFrame {
         createMenu();
         createUI();
         createStatusBar();
+
+        setStatus("Disconnected");
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(UI_Constants.WIDTH, UI_Constants.HEIGHT);
@@ -61,16 +63,14 @@ public class Client_Display extends JFrame {
         menu = new JMenu("Help");
         menuBar.add(menu);
 
-        // TODO: How to use dialog
         menuItem = new JMenuItem("How to use");
-        menuItem.addActionListener(e -> System.out.println("TODO: How to use dialog"));
+        menuItem.addActionListener(e -> messageBox(UI_Strings.HOW_TO_USE_TEXT));
         menu.add(menuItem);
 
         menu.addSeparator();
 
-        // TODO: About dialog
         menuItem = new JMenuItem("About");
-        menuItem.addActionListener(e -> System.out.println("TODO: About dialog"));
+        menuItem.addActionListener(e -> messageBox(UI_Strings.ABOUT_TEXT));
         menu.add(menuItem);
 
         this.setJMenuBar(menuBar);
@@ -102,7 +102,7 @@ public class Client_Display extends JFrame {
         padding.setBorder(UI_Constants.STANDARD_PADDING);
         statusBar.add(padding, BorderLayout.CENTER);
 
-        this.statusLabel = new JLabel("Disconnected");
+        this.statusLabel = new JLabel();
         this.statusLabel.setVerticalAlignment(JLabel.CENTER);
         padding.add(this.statusLabel);
 
