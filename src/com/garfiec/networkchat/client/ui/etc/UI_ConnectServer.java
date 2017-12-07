@@ -5,11 +5,11 @@ import com.garfiec.networkchat.client.util.Chat_Client_Settings;
 import javax.swing.*;
 import java.awt.*;
 
-public class UI_Settings extends JFrame {
+public class UI_ConnectServer extends JFrame {
     private Chat_Client_Settings settings;
 
-    public UI_Settings(Chat_Client_Settings settings) {
-        super("Program Settings");
+    public UI_ConnectServer(Chat_Client_Settings settings) {
+        super("Connection Settings");
         this.settings = settings;
         getContentPane().setLayout(new BorderLayout());
 

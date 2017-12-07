@@ -1,12 +1,11 @@
 package com.garfiec.networkchat.client.ui;
 
 import com.garfiec.networkchat.client.Chat_Client;
-import com.garfiec.networkchat.client.ui.etc.UI_Settings;
+import com.garfiec.networkchat.client.ui.etc.UI_ConnectServer;
 import com.garfiec.networkchat.client.util.Chat_Client_Settings;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.LineBorder;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import java.awt.*;
@@ -46,15 +45,8 @@ public class Client_Display extends JFrame {
         menu = new JMenu("File");
         menuBar.add(menu);
 
-        // Todo: Connect to Server Dialog
         menuItem = new JMenuItem("Connect to Server");
-        menuItem.addActionListener(e -> System.out.println("TODO: Connect to server"));
-        menu.add(menuItem);
-
-        menu.addSeparator();
-
-        menuItem = new JMenuItem("Program Settings");
-        menuItem.addActionListener(e -> new JDialog(new UI_Settings(settings)));
+        menuItem.addActionListener(e -> new JDialog(new UI_ConnectServer(settings)));
         menu.add(menuItem);
 
         menu.addSeparator();
