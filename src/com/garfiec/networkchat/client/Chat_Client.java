@@ -6,13 +6,15 @@ import com.garfiec.networkchat.client.util.Chat_Client_Config;
 import com.garfiec.networkchat.common.Crypt_RSA;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Chat_Client {
     private Chat_Client_Config settings;
     private Client_Display          gui;
 
-    private Client_Socket           socket;
     private Crypt_RSA               rsa_cipher;
+
+    private HashMap<String, Client_Socket> users;
 
     public Chat_Client() {
         settings = new Chat_Client_Config();
