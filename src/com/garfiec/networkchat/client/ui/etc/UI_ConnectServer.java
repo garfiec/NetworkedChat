@@ -2,6 +2,8 @@ package com.garfiec.networkchat.client.ui.etc;
 
 import com.garfiec.networkchat.client.ui.UI_Constants;
 import com.garfiec.networkchat.client.util.Chat_Client_Config;
+import com.garfiec.networkchat.common.Crypt_RSA;
+import com.garfiec.networkchat.common.Crypt_RSA.Keys;
 
 import javax.swing.*;
 import java.awt.*;
