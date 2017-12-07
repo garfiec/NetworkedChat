@@ -6,7 +6,9 @@
  *
  *  @author Ammar Subei
 */
+
 package com.garfiec.networkchat.server;
+
 /**
  *  @brief Tuple class
  *
