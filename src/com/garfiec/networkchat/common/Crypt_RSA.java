@@ -2,6 +2,7 @@ package com.garfiec.networkchat.common;
 import java.lang.Math;
 import java.util.ArrayList;
 import java.lang.Long;
+import java.math.BigInteger;
 
 public class Crypt_RSA {
 
@@ -51,37 +52,54 @@ public class Crypt_RSA {
 		return new Keys(e, d, N, true);
 	}
 
-	public ArrayList<Long> encrypt(String data, Keys key) {
+	public ArrayList<BigInteger> encrypt(String data, Keys key) {
 		int len = data.length();
 		int len2 = ((len % 4) == 0) ? len : (len + (4-(len % 4)));
 		char chars[] = new char[len2];
-		chars = data.toCharArray();
-		for (int i = len-1; i < len2; ++i) {
-			chars[i] = 0;
+		char ourData[] = data.toCharArray();
+		for (int i = 0; i < ourData.length; ++i) {
+			chars[i] = ourData[i];
+		}
+		if (len%4 != 0) {
+			for (int i = ourData.length; i < len2; ++i) {
+				// please keep this comment. Uncomment if encryption fails
+				//System.out.println(String.format("Setting %d.. Length is %d and len2 is %d", i, len, len2));
+				chars[i] = 0;
+			}
 		}
 		int k = len2/4;
-		ArrayList<Long> result = new ArrayList<Long>();
+		ArrayList<BigInteger> result = new ArrayList<BigInteger>();
 		for (int i = 0; i < k; ++i) {
-			Long r = (long)0;
+			BigInteger r = BigInteger.valueOf(0);
 			for (int j = 0; j < 4; ++j) {
 				int index = i*4+j;
-				r += (long)(((long)chars[index])*Math.pow(128, j));
+				BigInteger single = BigInteger.valueOf((long)chars[index]);
+				BigInteger multiplicand = BigInteger.valueOf((long)Math.pow(128, j));
+				r = r.add(single.multiply(multiplicand));
 			}
-			result.add(r);
+			result.add(r.modPow(BigInteger.valueOf(key.e), BigInteger.valueOf(key.n)));
 		}
 		return result;
 	}
 
-	public String decrypt(ArrayList<Long> data, Keys key) {
+	public String decrypt(ArrayList<BigInteger> dataOrig, Keys key) {
+		ArrayList<BigInteger> data = new ArrayList<BigInteger>();
+		for (BigInteger l: dataOrig) {
+			BigInteger result = l.modPow(BigInteger.valueOf(key.d), BigInteger.valueOf(key.n));
+			data.add(result);
+			// Keep this comment please. Uncomment if error in decryption happens
+			//System.out.println(String.format("%d turning into %d", l, result));
+		}
 		int len = data.size();
 		char chars[] = new char[len*4+1];
 		for (int i = 0; i < len; ++i) {
-			long l = data.get(i);
+			BigInteger l = data.get(i);
 			for (int j = 4; j > 0; --j) {
-				long k = l >> (7*(j-1));
-				k = k & 0x7F;
-				System.out.println(String.format("Turning %d into %c by shifting %d", l, (char)k, (8*(j-1))));
-				chars[(i*4)+(j-1)] = (char)k;
+				BigInteger k = l.shiftRight(7*(j-1)).and(BigInteger.valueOf(0x7F));
+				long c = k.longValue();
+				// Keep this comment please. Uncomment if error in decryption happens
+				//System.out.println(String.format("Turning %d into %c by shifting %d", l, (char)c, (8*(j-1))));
+				chars[(i*4)+(j-1)] = (char)c;
 			}
 		}
 		chars[len*4] = 0;
