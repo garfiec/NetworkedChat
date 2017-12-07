@@ -31,6 +31,8 @@ public class Client_Display extends JFrame {
         createUI();
         createStatusBar();
 
+        setStatus("Disconnected");
+
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setSize(UI_Constants.WIDTH, UI_Constants.HEIGHT);
         setVisible(true);
@@ -61,16 +63,14 @@ public class Client_Display extends JFrame {
         menu = new JMenu("Help");
         menuBar.add(menu);
 
-        // TODO: How to use dialog
         menuItem = new JMenuItem("How to use");
-        menuItem.addActionListener(e -> System.out.println("TODO: How to use dialog"));
+        menuItem.addActionListener(e -> messageBox(UI_Strings.HOW_TO_USE_TEXT));
         menu.add(menuItem);
 
         menu.addSeparator();
 
-        // TODO: About dialog
         menuItem = new JMenuItem("About");
-        menuItem.addActionListener(e -> System.out.println("TODO: About dialog"));
+        menuItem.addActionListener(e -> messageBox(UI_Strings.ABOUT_TEXT));
         menu.add(menuItem);
 
         this.setJMenuBar(menuBar);
@@ -102,7 +102,7 @@ public class Client_Display extends JFrame {
         padding.setBorder(UI_Constants.STANDARD_PADDING);
         statusBar.add(padding, BorderLayout.CENTER);
 
-        this.statusLabel = new JLabel("Disconnected");
+        this.statusLabel = new JLabel();
         this.statusLabel.setVerticalAlignment(JLabel.CENTER);
         padding.add(this.statusLabel);
 

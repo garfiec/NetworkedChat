@@ -1,6 +1,7 @@
 package com.garfiec.networkchat.client.ui.etc;
 
 import com.garfiec.networkchat.client.ui.UI_Constants;
+import com.garfiec.networkchat.client.ui.UI_Strings;
 import com.garfiec.networkchat.client.util.Chat_Client_Config;
 import com.garfiec.networkchat.common.Crypt_RSA;
 import com.garfiec.networkchat.common.Crypt_RSA.Keys;
@@ -113,6 +114,12 @@ public class UI_ConnectServer extends JFrame {
         cipher_q_panel.add(this.cipher_q_input, BorderLayout.CENTER);
         advanced_settings_panel.add(cipher_q_panel);
 
+        JPanel cipher_note_panel = new JPanel(new BorderLayout());
+        cipher_note_panel.setBorder(UI_Constants.RIGHT_PADDING);
+        JLabel cipher_note_label = new JLabel(UI_Strings.CIPHER_USE_NOTE);
+        cipher_note_panel.add(cipher_note_label, BorderLayout.CENTER);
+        advanced_settings_panel.add(cipher_note_panel);
+
         // Constraints
         advanced_settings_layout.putConstraint(SpringLayout.WEST, cipher_settings_label, UI_Constants.STD_PAD, SpringLayout.WEST, advanced_settings_panel);
         advanced_settings_layout.putConstraint(SpringLayout.NORTH, cipher_settings_label, UI_Constants.STD_PAD, SpringLayout.NORTH, advanced_settings_panel);
@@ -122,8 +129,10 @@ public class UI_ConnectServer extends JFrame {
         advanced_settings_layout.putConstraint(SpringLayout.WEST, cipher_q_panel, UI_Constants.STD_PAD, SpringLayout.WEST, advanced_settings_panel);
         advanced_settings_layout.putConstraint(SpringLayout.NORTH, cipher_q_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, cipher_p_panel);
         advanced_settings_layout.putConstraint(SpringLayout.EAST, cipher_q_panel, UI_Constants.STD_PAD, SpringLayout.EAST, advanced_settings_panel);
+        advanced_settings_layout.putConstraint(SpringLayout.NORTH, cipher_note_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, cipher_q_panel);
+        advanced_settings_layout.putConstraint(SpringLayout.EAST, cipher_note_panel, UI_Constants.STD_PAD, SpringLayout.EAST, advanced_settings_panel);
 
-        advanced_settings_layout.putConstraint(SpringLayout.SOUTH, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, cipher_q_panel);
+        advanced_settings_layout.putConstraint(SpringLayout.SOUTH, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, cipher_note_panel);
 
         /////////////////////////////////////////
         // UI Config
