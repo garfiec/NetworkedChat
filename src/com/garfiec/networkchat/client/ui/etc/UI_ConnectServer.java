@@ -1,13 +1,13 @@
 package com.garfiec.networkchat.client.ui.etc;
 
 import com.garfiec.networkchat.client.ui.UI_Constants;
-import com.garfiec.networkchat.client.util.Chat_Client_Settings;
+import com.garfiec.networkchat.client.util.Chat_Client_Config;
 
 import javax.swing.*;
 import java.awt.*;
 
 public class UI_ConnectServer extends JFrame {
-    private Chat_Client_Settings settings;
+    private Chat_Client_Config settings;
 
     private JTextField server_ip_input;
     private JTextField server_port_input;
@@ -15,7 +15,7 @@ public class UI_ConnectServer extends JFrame {
     private JTextField cipher_p_input;
     private JTextField cipher_q_input;
 
-    public UI_ConnectServer(Chat_Client_Settings settings) {
+    public UI_ConnectServer(Chat_Client_Config settings) {
         super("Connection Settings");
         this.settings = settings;
         getContentPane().setLayout(new BorderLayout());

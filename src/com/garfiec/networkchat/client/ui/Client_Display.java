@@ -2,7 +2,7 @@ package com.garfiec.networkchat.client.ui;
 
 import com.garfiec.networkchat.client.Chat_Client;
 import com.garfiec.networkchat.client.ui.etc.UI_ConnectServer;
-import com.garfiec.networkchat.client.util.Chat_Client_Settings;
+import com.garfiec.networkchat.client.util.Chat_Client_Config;
 
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
@@ -14,13 +14,13 @@ import java.util.ArrayList;
 
 public class Client_Display extends JFrame {
     private Chat_Client          client;
-    private Chat_Client_Settings settings;
+    private Chat_Client_Config settings;
 
     private JList     users_list;
     private JTextArea community_messages;
     private JLabel    statusLabel;
 
-    public Client_Display(Chat_Client client, Chat_Client_Settings settings) {
+    public Client_Display(Chat_Client client, Chat_Client_Config settings) {
         super(UI_Strings.GUI_TITLE);
         getContentPane().setLayout(new BorderLayout());
 
