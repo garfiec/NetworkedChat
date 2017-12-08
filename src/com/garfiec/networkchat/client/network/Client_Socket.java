@@ -1,14 +1,11 @@
 package com.garfiec.networkchat.client.network;
 
 import com.garfiec.networkchat.client.Chat_Client;
-import com.garfiec.networkchat.common.Crypt_RSA;
 import com.garfiec.networkchat.server.Packet;
 
 import java.math.BigInteger;
 import java.net.*;
 import java.io.*;
-import java.awt.*;
-import java.awt.event.*;
 import java.util.ArrayList;
 
 public class Client_Socket {
