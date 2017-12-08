@@ -18,6 +18,7 @@ import com.garfiec.networkchat.common.Crypt_RSA.Keys;
 public class Packet implements Serializable
 {
   private int packetType;
+  private String source;
   private ArrayList< Tuple<String, Keys> > keyData;
   private ArrayList< Tuple<String, ArrayList<BigInteger>> > messageData;
 
@@ -29,6 +30,18 @@ public class Packet implements Serializable
     keyData = new ArrayList< Tuple<String, Keys> >();
     messageData = new ArrayList< Tuple<String, ArrayList<BigInteger>> >();
     packetType = type;
+    source = null;
+  }
+
+  /**
+   *  @brief Default constructor
+   */
+  public Packet(int type, String name)
+  {
+    keyData = new ArrayList< Tuple<String, Keys> >();
+    messageData = new ArrayList< Tuple<String, ArrayList<BigInteger>> >();
+    packetType = type;
+    source = name;
   }
 
   /**
@@ -38,6 +51,15 @@ public class Packet implements Serializable
   public int getType()
   {
     return packetType;
+  }
+
+  /**
+   *  @brief Getter for source name
+   *  @return String source name
+   */
+  public String getSource()
+  {
+    return source;
   }
 
   /**
@@ -55,6 +77,15 @@ public class Packet implements Serializable
   }
 
   /**
+   *  @brief Gets all keys
+   *  @return ArrayList<Tuple<String,Keys>> keys
+   */
+  public ArrayList<Tuple<String,Keys>> getKey()
+  {
+    return keyData;
+  }
+
+  /**
    *  @brief Gets key at given index
    *  @param int index
    *  @return Keys key
@@ -62,6 +93,15 @@ public class Packet implements Serializable
   public Keys getKey(int index)
   {
     return keyData.get(index).getSecond();
+  }
+
+  /**
+   *  @brief Gets all messages
+   *  @return ArrayList messages
+   */
+  public ArrayList<Tuple<String,ArrayList<BigInteger>>> getMessage()
+  {
+    return messageData;
   }
 
   /**
@@ -106,13 +146,4 @@ public class Packet implements Serializable
   {
     messageData.add( new Tuple<String, ArrayList<BigInteger>>(name, message) );
   }
-
-  /**
-   *  @brief Appends data to existing packet
-   *  @param List<Tuple<String,T>> data to add
-   */
-  //public void add(List<Tuple<String,T>> newData)
-  //{
-    //data.addAll(newData);
-  //}
 }

@@ -171,6 +171,7 @@ public class Client_Display extends JFrame {
         user_message.addActionListener(e -> {
             if (!e.getActionCommand().equals("")) {
                 this.client.sendMessage(e.getActionCommand(), new ArrayList<>(users_list.getSelectedValuesList()));
+				appendMessage(this.settings.user_name+": "+e.getActionCommand());
             }
             user_message.setText("");
         });
@@ -218,7 +219,7 @@ public class Client_Display extends JFrame {
 
     // Adds a message to the end of chat room
     public void appendMessage(String msg) {
-        this.community_messages.append(msg);
+        this.community_messages.append(msg+"\n");
         this.community_messages.setCaretPosition(this.community_messages.getDocument().getLength());
     }
 

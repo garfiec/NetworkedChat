@@ -107,7 +107,7 @@ public class ClientsList
    */
   public synchronized void remove(String name)
   {
-    if ( !clients.contains(name) ) {
+    if (!contains(name) ) {
       return;
     }
 

@@ -1,5 +1,7 @@
 package com.garfiec.networkchat.client.util;
 
+import com.garfiec.networkchat.common.Crypt_RSA;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.concurrent.ThreadLocalRandom;
@@ -11,6 +13,8 @@ public class Chat_Client_Config {
 
     public long cipher_p = 0;
     public long cipher_q = 0;
+
+    public Crypt_RSA.Keys cipher_key;
 
     public String user_name = "Guest";
 

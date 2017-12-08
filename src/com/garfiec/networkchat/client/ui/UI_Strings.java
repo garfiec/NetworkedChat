@@ -19,6 +19,7 @@ public class UI_Strings {
                 "<ol>" +
                     "<li>Once you are connected to the server, you may send a message to a connected user</li>" +
                     "<li>Select a target user to send a message to</li>" +
+                    "<li>To select multiple users, hold down control and select additional users</li>" +
                     "<li>Navigate to the bottom right text box and enter your message</li>" +
                     "<li>Press {Enter} when you are ready to send your message</li>" +
                 "</ol>" +

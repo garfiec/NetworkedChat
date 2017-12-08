@@ -183,7 +183,7 @@ class CommunicationThread extends Thread
         return;
       }
 
-      Packet data = new Packet(0);
+      Packet data = new Packet(1);
 
       for (int i = 0; i < connectedClients.getSize(); i++) {
         Client client = connectedClients.get(i);
@@ -201,12 +201,18 @@ class CommunicationThread extends Thread
     }
 
     // Send new client's info to other clients
-    Client newClient = new Client(clientSocket, clientName, clientKey);
-    connectedClients.add(newClient);
+    connectedClients.add(new Client(clientSocket, clientName, clientKey));
+
+    Packet updateClients = new Packet(1);
 
     for (int i = 0; i < connectedClients.getSize(); i++) {
       Client client = connectedClients.get(i);
-      client.sendKey(newClientInfo);
+      updateClients.add(client.getName(), client.getKey());
+    }
+
+    for (int i = 0; i < connectedClients.getSize(); i++) {
+      Client client = connectedClients.get(i);
+      client.sendKey(updateClients);
     }
 
     try {
@@ -220,7 +226,7 @@ class CommunicationThread extends Thread
 
           System.out.println ("Sending Message");
 
-          Packet sendData = new Packet(2);
+          Packet sendData = new Packet(2, clientMessage.getSource());
           sendData.add(target, message);
 
           Client client = connectedClients.get(target);
@@ -235,12 +241,14 @@ class CommunicationThread extends Thread
       if ( connectedClients.contains(clientName) ) {
         connectedClients.remove(clientName);
 
-        Packet updateClients = new Packet(2);
+        updateClients = new Packet(1);
 
         for (int i = 0; i < connectedClients.getSize(); i++) {
           Client client = connectedClients.get(i);
           updateClients.add(client.getName(), client.getKey());
         }
+
+		System.out.println(String.format("Size is now %d", connectedClients.getSize()));
 
         for (int i = 0; i < connectedClients.getSize(); i++) {
           Client client = connectedClients.get(i);

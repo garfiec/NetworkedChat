@@ -187,15 +187,14 @@ public class UI_ConnectServer extends JFrame {
         this.settings.server_ip = server_ip_input.getText();
         this.settings.port      = Integer.parseInt(server_port_input.getText());
         this.settings.user_name = user_name_input.getText();
+        this.settings.cipher_key = client.rsa_cipher.makeKeys(this.settings.cipher_p, this.settings.cipher_q);
 
         try {
 
             boolean worked = settings.setCipherPrimes(Long.parseLong(cipher_p_input.getText()), Long.parseLong(cipher_q_input.getText()));
             if (!worked) {
-                System.out.println("Invalid p / q");
-            }
-            else {
-
+                JOptionPane.showMessageDialog(this, "Invalid p / q");
+                return;
             }
 
             Client_Socket sock = new Client_Socket(this.settings.server_ip, this.settings.port, this.client);
@@ -204,7 +203,7 @@ public class UI_ConnectServer extends JFrame {
                 return;
             }
 
-			if (sock.sendKey(user_name_input.getText(), client.rsa_cipher.makeKeys(this.settings.cipher_p, this.settings.cipher_q))) {
+			if (sock.sendKey(user_name_input.getText(), this.settings.cipher_key)) {
 				sock.listen();
             } else {
                 JOptionPane.showMessageDialog(this, "Didn't connect.. Invalid name?");
@@ -213,7 +212,6 @@ public class UI_ConnectServer extends JFrame {
 
             this.client.setSocket(sock);
             this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
-            JOptionPane.showMessageDialog(this, "We connected!");
 
         }
         catch (Exception er) {
