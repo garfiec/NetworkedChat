@@ -148,11 +148,10 @@ class CommunicationThread extends Thread
   private Server server;
   private ClientsList connectedClients;
 
-  public CommunicationThread (Socket clientSoc, Server ec3, 
-      ClientsList clients)
+  public CommunicationThread(Socket sock, Server s, ClientsList clients)
   {
-    clientSocket = clientSoc;
-    server = ec3;
+    clientSocket = sock;
+    server = s;
     connectedClients = clients;
     start();
   }
@@ -162,26 +161,24 @@ class CommunicationThread extends Thread
     System.out.println ("New Communication Thread Started");
 
     // TODO: need to receive a message from new client to get its info (name, key)
+    // TODO: need to send new client's info to other clients
+
     String clientName = null;
 
-    // TODO: need to send new client's info
-
     try {
-      PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true); 
+      ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream()); 
       Crypt_RSA a = new Crypt_RSA();
       Keys k = a.makeKeys(256201021L, 256203161L);
 
       Client cl = new Client(clientSocket, clientName, k);
       connectedClients.add(cl);
 
-      BufferedReader in = new BufferedReader( 
-          new InputStreamReader( clientSocket.getInputStream())); 
+      ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
 
-      String inputLine;  
+      Packet clientMessage;  
 
-      while ((inputLine = in.readLine()) != null) {
-        System.out.println ("Input: " + inputLine); 
-        //server.history.insert (inputLine+"\n", 0);
+      while ( (clientMessage = in.readObject()).isEmpty() ) {
+        //System.out.println ("Input: " + inputLine);
 
         // TODO: send to specified clients only
         for (int i = 0; i < connectedClients.getSize(); i++) {

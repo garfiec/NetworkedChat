@@ -77,9 +77,9 @@ public class Client
    *  @brief Sends a data packet
    *  @param Packet data to send
    */
-  //public void send(Packet data)
-  //{
+  public void send(Packet data)
+  {
     // TODO
-  //}
+  }
 }
 
