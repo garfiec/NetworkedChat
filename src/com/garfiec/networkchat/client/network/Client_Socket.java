@@ -33,10 +33,11 @@ public class Client_Socket {
 		data.add(BigInteger.valueOf(500));
 		pack.add("GARFIE", data);
 		try {
+			System.out.println("here");
 			out.writeObject(msg);
 		}
 		catch (Exception e) {
-
+			System.out.println("Fuuuuck");
 		}
 	}
 
@@ -72,23 +73,24 @@ class CommunicationReadThread extends Thread
   {
     System.out.println ("Client is listening to server for messages");
 
-    try {
-      Packet<Crypt_RSA.Keys> inputLine;
+while (true) {}
+    //try {
+      //Packet<Crypt_RSA.Keys> inputLine;
 
-      while ((inputLine = (Packet) in.readObject()) != null)
-      {
-        System.out.println ("Client received: " + inputLine);
-      }
-	  System.out.println("Something went wrong. We disconnected"); 
-	  in.close();
-    }
-    catch (IOException e)
-    {
-      System.err.println("Client encountered problem while reading");
-    }
-    catch (ClassNotFoundException e) {
+      //while ((inputLine = (Packet) in.readObject()) != null)
+      //{
+      //  System.out.println ("Client received: " + inputLine);
+      //}
+	  //System.out.println("Something went wrong. We disconnected"); 
+	  //in.close();
+    //}
+   // catch (IOException e)
+    //{
+      //System.err.println("Client encountered problem while reading");
+   // }
+    //catch (ClassNotFoundException e) {
 
-	}
+	//}
   }
 }
 

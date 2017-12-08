@@ -179,7 +179,7 @@ class CommunicationThread extends Thread
 //      Packet<ArrayList<BigInteger>> clientMessage;
       String clientMessage;
 
-      while ( (clientMessage = (String) in.readObject()).isEmpty() ) {
+      while ( !(clientMessage = (String) in.readObject()).isEmpty() ) {
         System.out.println ("Input: " + clientMessage);
 
         // TODO: send to specified clients only
