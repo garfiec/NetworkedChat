@@ -1,5 +1,9 @@
 package com.garfiec.networkchat.client.util;
 
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+
 public class Chat_Client_Config {
     // Storage for settings related to client program
     public String   server_ip   = "127.0.0.1";
@@ -9,6 +13,8 @@ public class Chat_Client_Config {
     public long cipher_q;
 
     public String user_name = "Guest";
+
+    private ArrayList<Integer> prime_list;
 
     public Chat_Client_Config() {
         // Generate random primes as default
@@ -22,6 +28,8 @@ public class Chat_Client_Config {
         if (p == 0 && q == 0) {
             // Todo: Generate primes
             // https://crypto.stackexchange.com/questions/71/how-can-i-generate-large-prime-numbers-for-rsa
+//            InputStream stream = this.getClass().getClassLoader().getResourceAsStream("/com/garfiec/common/etc/primes.rsc");
+//            System.out.println(stream != null);
 
             return true;
         }
