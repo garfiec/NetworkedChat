@@ -161,19 +161,21 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
+    Packet<Keys> newClientInfo = null;
     ObjectInputStream in = null;
     ObjectOutputStream out = null;
     String clientName = null;
+    Keys clientKey = null;
 
-    // TODO: need to receive a message from new client to get its info (name, key)
-
+    // Receive a message from new client to get its info (name, key)
     try {
       in = new ObjectInputStream(clientSocket.getInputStream()); 
       out = new ObjectOutputStream(clientSocket.getOutputStream()); 
-      Packet<Keys> newClientInfo = (Packet) in.readObject();
       
+      newClientInfo = (Packet) in.readObject();
       clientName = newClientInfo.getName(0);
-	  System.out.println("received"+clientName);
+	  System.out.println("received from "+clientName);
+      clientKey = newClientInfo.getMessage(0);
 
       // Client name is already taken
       if ( connectedClients.contains(clientName) ) {
@@ -198,15 +200,16 @@ class CommunicationThread extends Thread
       System.err.println("Problem with packet received");
     }
 
-    // TODO: need to send new client's info to other clients
+    // Send new client's info to other clients
+    Client newClient = new Client(clientSocket, clientName, clientKey);
+    connectedClients.add(newClient);
+
+    for (int i = 0; i < connectedClients.getSize(); i++) {
+      Client client = connectedClients.get(i);
+      client.sendKey(newClientInfo);
+    }
 
     try {
-      Crypt_RSA a = new Crypt_RSA();
-      Keys k = a.makeKeys(256201021L, 256203161L);
-
-      Client cl = new Client(clientSocket, clientName, k);
-      connectedClients.add(cl);
-
       Packet<ArrayList<BigInteger>> clientMessage;
 
       while ( !(clientMessage = (Packet)in.readObject()).isEmpty() ) {
@@ -225,14 +228,25 @@ class CommunicationThread extends Thread
         }
       } 
 
-      connectedClients.remove(cl.getName());
-      out.close(); 
-      in.close(); 
-      clientSocket.close(); 
     } catch (IOException e) {
-      System.err.println("Problem with Communication Server"+e);
+      //System.err.println("Problem with Communication Server"+e);
       e.printStackTrace();
-      //System.exit(1);
+
+      if ( connectedClients.contains(clientName) ) {
+        connectedClients.remove(clientName);
+
+        Packet<Keys> updateClients = new Packet<>(1);
+
+        for (int i = 0; i < connectedClients.getSize(); i++) {
+          Client client = connectedClients.get(i);
+          updateClients.add(client.getName(), client.getKey());
+        }
+
+        for (int i = 0; i < connectedClients.getSize(); i++) {
+          Client client = connectedClients.get(i);
+          client.sendKey(updateClients);
+        }
+      }
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
     }
