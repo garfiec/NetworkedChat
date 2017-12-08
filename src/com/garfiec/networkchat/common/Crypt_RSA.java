@@ -5,7 +5,7 @@ import java.lang.Long;
 import java.math.BigInteger;
 import java.io.Serializable;
 
-public class Crypt_RSA {
+public class Crypt_RSA implements Serializable {
 
 	public class Keys implements Serializable {
 		public long e;
