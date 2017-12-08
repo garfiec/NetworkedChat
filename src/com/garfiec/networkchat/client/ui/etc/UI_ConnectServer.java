@@ -202,8 +202,13 @@ public class UI_ConnectServer extends JFrame {
 
             Client_Socket sock = new Client_Socket(ip, port, this.client);
             sock.connect();
+			if (sock.sendKey(user_name_input.getText(), client.rsa_cipher.makeKeys(this.settings.cipher_p, this.settings.cipher_q))) {
+				System.out.println("We connected!");
+				sock.listen();
+			} else {
+				System.out.println("Didnt connect.. Invalid name?");
+			}
 
-            sock.sendMessage("sdf");
         }
         catch (Exception er) {
             System.out.println("Try again");

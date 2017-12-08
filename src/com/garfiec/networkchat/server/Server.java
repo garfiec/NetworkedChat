@@ -173,6 +173,7 @@ class CommunicationThread extends Thread
       Packet<Keys> newClientInfo = (Packet) in.readObject();
       
       clientName = newClientInfo.getName(0);
+	  System.out.println("received"+clientName);
 
       // Client name is already taken
       if ( connectedClients.contains(clientName) ) {
@@ -191,7 +192,8 @@ class CommunicationThread extends Thread
       // Send client the list of connected clients
       out.writeObject(data);
     } catch (IOException e) {
-      System.err.println("ERROR receiving client info");
+      System.err.println("ERROR receiving client info"+e);
+	  e.printStackTrace();
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
     }

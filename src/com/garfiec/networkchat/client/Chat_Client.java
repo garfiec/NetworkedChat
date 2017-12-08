@@ -9,17 +9,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Chat_Client {
-    private Chat_Client_Config settings;
+    public Chat_Client_Config settings;
     private Client_Display          gui;
 
-    private Crypt_RSA               rsa_cipher;
+    public Crypt_RSA               rsa_cipher;
 
     private HashMap<String, Client_Socket> users;
 
     public Chat_Client() {
         settings = new Chat_Client_Config();
         gui = new Client_Display(this, settings);
-        receiveData(1);
+		rsa_cipher = new Crypt_RSA();
     }
 
     // Todo: Data received from socket
