@@ -3,10 +3,11 @@ import java.lang.Math;
 import java.util.ArrayList;
 import java.lang.Long;
 import java.math.BigInteger;
+import java.io.Serializable;
 
 public class Crypt_RSA {
 
-	public class Keys {
+	public class Keys implements Serializable {
 		public long e;
 		public long d;
 		public long n;

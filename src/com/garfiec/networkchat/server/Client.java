@@ -15,6 +15,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import java.util.*;
+import java.math.BigInteger;
 
 import com.garfiec.networkchat.common.Crypt_RSA;
 import com.garfiec.networkchat.common.Crypt_RSA.Keys;
@@ -75,11 +76,20 @@ public class Client
 
   /**
    *  @brief Sends a data packet
-   *  @param Packet data to send
+   *  @param Packet<ArrayList<BigInteger>> message to send
    */
-  public void send(Packet data)
+  public void sendMessage(Packet<ArrayList<BigInteger>> data)
   {
-    // TODO
+    // TODO send a packet of a client's encrypted message
+  }
+
+  /**
+   *  @brief Sends a data packet
+   *  @param Packet<Keys> new client info to send
+   */
+  public void sendKey(Packet<Keys> data)
+  {
+    // TODO send a packet of a new client's (name,key)
   }
 }
 
