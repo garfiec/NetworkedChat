@@ -100,9 +100,9 @@ class ConnectionThread extends Thread
 {
   Server server;
 
-  public ConnectionThread (Server es3)
+  public ConnectionThread (Server s)
   {
-    server = es3;
+    server = s;
     start();
   }
 
@@ -171,10 +171,10 @@ class CommunicationThread extends Thread
     try {
       in = new ObjectInputStream(clientSocket.getInputStream()); 
       out = new ObjectOutputStream(clientSocket.getOutputStream()); 
-      
+
       newClientInfo = (Packet) in.readObject();
       clientName = newClientInfo.getName(0);
-	  System.out.println("received from "+clientName);
+      System.out.println("received from "+clientName);
       clientKey = newClientInfo.getMessage(0);
 
       // Client name is already taken
@@ -187,7 +187,7 @@ class CommunicationThread extends Thread
 
       for (int i = 0; i < connectedClients.getSize(); i++) {
         Client client = connectedClients.get(i);
-        
+
         data.add(client.getName(), client.getKey());
       }
 
@@ -195,7 +195,7 @@ class CommunicationThread extends Thread
       out.writeObject(data);
     } catch (IOException e) {
       System.err.println("ERROR receiving client info"+e);
-	  e.printStackTrace();
+      e.printStackTrace();
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
     }
