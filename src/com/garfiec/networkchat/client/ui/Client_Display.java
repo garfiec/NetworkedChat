@@ -13,6 +13,9 @@ import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.ArrayList;
+import java.net.*;
+import java.io.*;
+import java.util.*;
 
 public class Client_Display extends JFrame {
     private Chat_Client          client;

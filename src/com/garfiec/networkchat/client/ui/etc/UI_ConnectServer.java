@@ -65,8 +65,9 @@ public class UI_ConnectServer extends JFrame {
         connect_server_panel.setBorder(UI_Constants.RIGHT_PADDING);
         JButton connect_server_bttn = new JButton("Connect to Server");
         connect_server_bttn.addActionListener(e -> {
-            // Todo: Save settings
-            // Todo: Tell client to connect to server
+			String ip = server_ip_input.getText();
+			String port = server_port_input.getText();
+			System.out.println(String.format("Got %s and %s", ip, port));
         });
         connect_server_panel.add(connect_server_bttn);
         connection_settings_panel.add(connect_server_panel);
