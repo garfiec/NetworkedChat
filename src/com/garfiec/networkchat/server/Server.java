@@ -226,14 +226,25 @@ class CommunicationThread extends Thread
         }
       } 
 
-      connectedClients.remove(clientName);
-      out.close(); 
-      in.close(); 
-      clientSocket.close(); 
     } catch (IOException e) {
-      System.err.println("Problem with Communication Server"+e);
+      //System.err.println("Problem with Communication Server"+e);
       e.printStackTrace();
-      //System.exit(1);
+
+      if ( connectedClients.contains(clientName) ) {
+        connectedClients.remove(clientName);
+
+        Packet<Keys> updateClients = new Packet<>(1);
+
+        for (int i = 0; i < connectedClients.getSize(); i++) {
+          Client client = connectedClients.get(i);
+          updateClients.add(client.getName(), client.getKey());
+        }
+
+        for (int i = 0; i < connectedClients.getSize(); i++) {
+          Client client = connectedClients.get(i);
+          client.sendKey(updateClients);
+        }
+      }
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
     }
