@@ -161,41 +161,39 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
-    // TODO: need to receive a message from new client to get its info (name, key)
     // TODO: need to send new client's info to other clients
 
     String clientName = null;
 
     try {
+      // TODO: need to receive a message from new client to get its info (name, key)
+      ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
       ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream()); 
+
+      Packet<Keys> newClientInfo = (Packet) in.readObject();
+
       Crypt_RSA a = new Crypt_RSA();
       Keys k = a.makeKeys(256201021L, 256203161L);
 
       Client cl = new Client(clientSocket, clientName, k);
       connectedClients.add(cl);
 
-      ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
-
       Packet<ArrayList<BigInteger>> clientMessage;
 
-      while ( (clientMessage = (Packet) in.readObject()).isEmpty() ) {
-        //System.out.println ("Input: " + inputLine);
+      while ( (clientMessage = (Packet)in.readObject()).isEmpty() ) {
+        // Send to specified clients only
+        for (int i = 0; i < clientMessage.getSize(); i++) {
+          String target = clientMessage.getName(i);
+          ArrayList<BigInteger> message = clientMessage.getMessage(i);
 
-        // TODO: send to specified clients only
-        for (int i = 0; i < connectedClients.getSize(); i++) {
           System.out.println ("Sending Message");
 
-          Client client = connectedClients.get(i);
+          Packet<ArrayList<BigInteger>> sendData = new Packet<>(1);
+          sendData.add(target, message);
 
-          // TODO: send a Packet object
-          //client.getOutStream().print(inputLine.getBytes(Charset.forName("UTF-8")));
+          Client client = connectedClients.get(target);
+          client.sendMessage(sendData);
         }
-
-        //if (inputLine.equals("Bye"))
-          //break;
-
-        //if (inputLine.equals("End Server"))
-          //server.serverContinue = false;
       } 
 
       connectedClients.remove(cl.getName());
