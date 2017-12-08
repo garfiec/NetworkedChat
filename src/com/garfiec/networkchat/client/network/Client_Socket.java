@@ -19,21 +19,25 @@ public class Client_Socket {
 		this.portNum = portNum;
 	}
 
+	public sendMessage(String msg, ArrayList<String> names) {
+		System.out.println("Sending message");
+	}
+
 	public boolean connect() {
 		try {
 			sock = new Socket(machineName, portNum);
 			out = new PrintWriter(sock.getOutputStream(), true);
 			in = new BufferedReader(new InputStreamReader( sock.getInputStream()));
 
-			new CommunicationReadThread(in, this);
+			new CommunicationReadThread(in);
 		} catch (NumberFormatException e) {
-       		 history.insert ( "Server Port must be an integer\n", 0);
+			System.out.println("Error connecting");
       	} catch (UnknownHostException e) {
-      	  	history.insert("Don't know about host: " + machineName , 0);
+			System.out.println("Error connecting");
       	} catch (IOException e) {
-        	history.insert ("Couldn't get I/O for "
-            + "the connection to: " + machineName , 0);
+			System.out.println("Error connecting");
       	}
+		return true;
 	}
 }
 
