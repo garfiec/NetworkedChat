@@ -1,5 +1,7 @@
 package com.garfiec.networkchat.client.ui.etc;
 
+import com.garfiec.networkchat.client.Chat_Client;
+import com.garfiec.networkchat.client.network.Client_Socket;
 import com.garfiec.networkchat.client.ui.UI_Constants;
 import com.garfiec.networkchat.client.ui.UI_Strings;
 import com.garfiec.networkchat.client.util.Chat_Client_Config;
@@ -8,7 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UI_ConnectServer extends JFrame {
+    private  Chat_Client client;
     private Chat_Client_Config settings;
+
+    private JTextField user_name_input;
 
     private JTextField server_ip_input;
     private JTextField server_port_input;
@@ -16,15 +21,16 @@ public class UI_ConnectServer extends JFrame {
     private JTextField cipher_p_input;
     private JTextField cipher_q_input;
 
-    public UI_ConnectServer(Chat_Client_Config settings) {
+    public UI_ConnectServer(Chat_Client client, Chat_Client_Config settings) {
         super("Connection Settings");
+        this.client = client;
         this.settings = settings;
         getContentPane().setLayout(new BorderLayout());
 
         getContentPane().add(createUI());
 
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        setSize(700, 350);
+        setSize(700, 375);
         setVisible(true);
     }
 
@@ -60,17 +66,6 @@ public class UI_ConnectServer extends JFrame {
         server_port_panel.add(this.server_port_input, BorderLayout.CENTER);
         connection_settings_panel.add(server_port_panel);
 
-        // Connect Button
-        JPanel connect_server_panel = new JPanel(new BorderLayout());
-        connect_server_panel.setBorder(UI_Constants.RIGHT_PADDING);
-        JButton connect_server_bttn = new JButton("Connect to Server");
-        connect_server_bttn.addActionListener(e -> {
-            // Todo: Save settings
-            // Todo: Tell client to connect to server
-        });
-        connect_server_panel.add(connect_server_bttn);
-        connection_settings_panel.add(connect_server_panel);
-
         // Constraints
         connection_settings_layout.putConstraint(SpringLayout.WEST, server_ip_panel, UI_Constants.STD_PAD, SpringLayout.WEST, connection_settings_panel);
         connection_settings_layout.putConstraint(SpringLayout.NORTH, server_ip_panel, UI_Constants.STD_PAD, SpringLayout.NORTH, connection_settings_panel);
@@ -78,11 +73,30 @@ public class UI_ConnectServer extends JFrame {
         connection_settings_layout.putConstraint(SpringLayout.WEST, server_port_panel, UI_Constants.STD_PAD, SpringLayout.WEST, connection_settings_panel);
         connection_settings_layout.putConstraint(SpringLayout.NORTH, server_port_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, server_ip_panel);
         connection_settings_layout.putConstraint(SpringLayout.EAST, server_port_panel, UI_Constants.STD_PAD, SpringLayout.EAST, connection_settings_panel);
+        connection_settings_layout.putConstraint(SpringLayout.SOUTH, connection_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, server_port_panel);
 
-        connection_settings_layout.putConstraint(SpringLayout.EAST, connect_server_panel, UI_Constants.STD_PAD, SpringLayout.EAST, connection_settings_panel);
-        connection_settings_layout.putConstraint(SpringLayout.NORTH, connect_server_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, server_port_panel);
-        connection_settings_layout.putConstraint(SpringLayout.SOUTH, connection_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, connect_server_panel);
+        /////////////////////////////////////////
+        // User details
 
+        JPanel user_details_panel = new JPanel();
+        SpringLayout user_details_layout = new SpringLayout();
+        user_details_panel.setLayout(user_details_layout);
+        user_details_panel.setBorder(BorderFactory.createTitledBorder("User Details"));
+
+        // User's name
+        JPanel user_name_panel = new JPanel(new BorderLayout());
+        user_name_panel.setBorder(UI_Constants.HORIZONTAL_PADDING);
+        JLabel user_name_label = new JLabel("Name ");
+        this.user_name_input = new JTextField(this.settings.user_name);
+        user_name_panel.add(user_name_label, BorderLayout.WEST);
+        user_name_panel.add(this.user_name_input, BorderLayout.CENTER);
+        user_details_panel.add(user_name_panel);
+
+        // Constraints
+        user_details_layout.putConstraint(SpringLayout.WEST, user_name_panel, UI_Constants.STD_PAD, SpringLayout.WEST, user_details_panel);
+        user_details_layout.putConstraint(SpringLayout.NORTH, user_name_panel, UI_Constants.STD_PAD, SpringLayout.NORTH, user_details_panel);
+        user_details_layout.putConstraint(SpringLayout.EAST, user_name_panel, UI_Constants.STD_PAD, SpringLayout.EAST, user_details_panel);
+        user_details_layout.putConstraint(SpringLayout.SOUTH, user_details_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, user_name_panel);
 
         /////////////////////////////////////////
         // Advanced settings
@@ -132,21 +146,67 @@ public class UI_ConnectServer extends JFrame {
 
         advanced_settings_layout.putConstraint(SpringLayout.SOUTH, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, cipher_note_panel);
 
+
+        /////////////////////////////////////////
+        // Connect to Server Button
+
+        // Connect Button
+        JPanel connect_server_panel = new JPanel(new BorderLayout());
+        connect_server_panel.setBorder(UI_Constants.RIGHT_PADDING);
+        JButton connect_server_bttn = new JButton("Connect to Server");
+        connect_server_bttn.addActionListener(e -> connectServer());
+        connect_server_panel.add(connect_server_bttn);
+
         /////////////////////////////////////////
         // UI Config
 
         // Add elements
         panel.add(connection_settings_panel);
+        panel.add(user_details_panel);
         panel.add(advanced_settings_panel);
+        panel.add(connect_server_panel);
 
         // Define constraints
         layout.putConstraint(SpringLayout.WEST, connection_settings_panel, UI_Constants.STD_PAD, SpringLayout.WEST, panel);
         layout.putConstraint(SpringLayout.NORTH, connection_settings_panel, UI_Constants.STD_PAD, SpringLayout.NORTH, panel);
         layout.putConstraint(SpringLayout.EAST, connection_settings_panel, UI_Constants.STD_PAD, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.WEST, user_details_panel, UI_Constants.STD_PAD, SpringLayout.WEST, panel);
+        layout.putConstraint(SpringLayout.NORTH, user_details_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, connection_settings_panel);
+        layout.putConstraint(SpringLayout.EAST, user_details_panel, UI_Constants.STD_PAD, SpringLayout.EAST, panel);
         layout.putConstraint(SpringLayout.WEST, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.WEST, panel);
-        layout.putConstraint(SpringLayout.NORTH, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, connection_settings_panel);
+        layout.putConstraint(SpringLayout.NORTH, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, user_details_panel);
         layout.putConstraint(SpringLayout.EAST, advanced_settings_panel, UI_Constants.STD_PAD, SpringLayout.EAST, panel);
+        layout.putConstraint(SpringLayout.NORTH, connect_server_panel, UI_Constants.STD_PAD, SpringLayout.SOUTH, advanced_settings_panel);
+        layout.putConstraint(SpringLayout.EAST, connect_server_panel, UI_Constants.STD_PAD, SpringLayout.EAST, panel);
 
         return panel;
+    }
+
+    private void connectServer() {
+        this.settings.server_ip = server_ip_input.getText();
+        this.settings.port      = Integer.parseInt(server_port_input.getText());
+        this.settings.user_name = user_name_input.getText();
+
+        try {
+
+            boolean worked = settings.setCipherPrimes(Long.parseLong(cipher_p_input.getText()), Long.parseLong(cipher_q_input.getText()));
+            if (!worked) {
+                System.out.println("Invalid p / q");
+            }
+            else {
+
+            }
+            String ip = server_ip_input.getText();
+            int port = Integer.parseInt(server_port_input.getText());
+            System.out.println(String.format("Got %s and %s", ip, port));
+
+            Client_Socket sock = new Client_Socket(ip, port, this.client);
+            sock.connect();
+
+            sock.sendMessage("sdf");
+        }
+        catch (Exception er) {
+            System.out.println("Try again");
+        }
     }
 }

@@ -201,7 +201,8 @@ class CommunicationThread extends Thread
       in.close(); 
       clientSocket.close(); 
     } catch (IOException e) {
-      System.err.println("Problem with Communication Server");
+      System.err.println("Problem with Communication Server"+e);
+      e.printStackTrace();
       //System.exit(1);
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
