@@ -9,10 +9,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Chat_Client {
-    private Chat_Client_Config settings;
+    public Chat_Client_Config settings;
     private Client_Display          gui;
 
-    private Crypt_RSA               rsa_cipher;
+    public Crypt_RSA               rsa_cipher;
 
     public Client_Socket socket = null;
     private HashMap<String, Crypt_RSA.Keys> users;
@@ -20,7 +20,7 @@ public class Chat_Client {
     public Chat_Client() {
         settings = new Chat_Client_Config();
         gui = new Client_Display(this, settings);
-        receiveData(1);
+		rsa_cipher = new Crypt_RSA();
     }
 
     public void setSocket(Client_Socket socket) {

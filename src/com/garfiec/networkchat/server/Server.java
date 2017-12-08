@@ -174,6 +174,7 @@ class CommunicationThread extends Thread
       
       newClientInfo = (Packet) in.readObject();
       clientName = newClientInfo.getName(0);
+	  System.out.println("received from "+clientName);
       clientKey = newClientInfo.getMessage(0);
 
       // Client name is already taken
@@ -193,7 +194,8 @@ class CommunicationThread extends Thread
       // Send client the list of connected clients
       out.writeObject(data);
     } catch (IOException e) {
-      System.err.println("ERROR receiving client info");
+      System.err.println("ERROR receiving client info"+e);
+	  e.printStackTrace();
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
     }
@@ -226,14 +228,25 @@ class CommunicationThread extends Thread
         }
       } 
 
-      connectedClients.remove(clientName);
-      out.close(); 
-      in.close(); 
-      clientSocket.close(); 
     } catch (IOException e) {
-      System.err.println("Problem with Communication Server"+e);
+      //System.err.println("Problem with Communication Server"+e);
       e.printStackTrace();
-      //System.exit(1);
+
+      if ( connectedClients.contains(clientName) ) {
+        connectedClients.remove(clientName);
+
+        Packet<Keys> updateClients = new Packet<>(1);
+
+        for (int i = 0; i < connectedClients.getSize(); i++) {
+          Client client = connectedClients.get(i);
+          updateClients.add(client.getName(), client.getKey());
+        }
+
+        for (int i = 0; i < connectedClients.getSize(); i++) {
+          Client client = connectedClients.get(i);
+          client.sendKey(updateClients);
+        }
+      }
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
     }
