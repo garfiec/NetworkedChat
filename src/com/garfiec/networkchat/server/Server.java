@@ -161,17 +161,44 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
-    // TODO: need to send new client's info to other clients
-
+    ObjectInputStream in = null;
+    ObjectOutputStream out = null;
     String clientName = null;
 
+    // TODO: need to receive a message from new client to get its info (name, key)
+
     try {
-      // TODO: need to receive a message from new client to get its info (name, key)
-      ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
-      ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream()); 
-
+      in = new ObjectInputStream(clientSocket.getInputStream()); 
+      out = new ObjectOutputStream(clientSocket.getOutputStream()); 
       Packet<Keys> newClientInfo = (Packet) in.readObject();
+      
+      clientName = newClientInfo.getName(0);
 
+      // Client name is already taken
+      if ( connectedClients.contains(clientName) ) {
+        out.writeObject( new Packet<Keys>(-1) );
+        return;
+      }
+
+      Packet<Keys> data = new Packet<>(0);
+
+      for (int i = 0; i < connectedClients.getSize(); i++) {
+        Client client = connectedClients.get(i);
+        
+        data.add(client.getName(), client.getKey());
+      }
+
+      // Send client the list of connected clients
+      out.writeObject(data);
+    } catch (IOException e) {
+      System.err.println("ERROR receiving client info");
+    } catch (ClassNotFoundException e) {
+      System.err.println("Problem with packet received");
+    }
+
+    // TODO: need to send new client's info to other clients
+
+    try {
       Crypt_RSA a = new Crypt_RSA();
       Keys k = a.makeKeys(256201021L, 256203161L);
 
@@ -180,7 +207,7 @@ class CommunicationThread extends Thread
 
       Packet<ArrayList<BigInteger>> clientMessage;
 
-      while ( (clientMessage = (Packet)in.readObject()).isEmpty() ) {
+      while ( !(clientMessage = (Packet)in.readObject()).isEmpty() ) {
         // Send to specified clients only
         for (int i = 0; i < clientMessage.getSize(); i++) {
           String target = clientMessage.getName(i);
@@ -206,7 +233,6 @@ class CommunicationThread extends Thread
       //System.exit(1);
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
-      //System.exit(1);
     }
   }
 }
