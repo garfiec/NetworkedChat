@@ -6,7 +6,10 @@
  *
  *  @author Ammar Subei
  */
+
 package com.garfiec.networkchat.server;
+
+import java.math.BigInteger;
 import java.net.*; 
 import java.io.*; 
 import java.awt.*;
@@ -95,43 +98,43 @@ public class Server
 
 class ConnectionThread extends Thread
 {
-  Server gui;
+  Server server;
 
   public ConnectionThread (Server es3)
   {
-    gui = es3;
+    server = es3;
     start();
   }
 
   public void run()
   {
-    gui.serverContinue = true;
+    server.serverContinue = true;
 
     try {
-      gui.serverSocket = new ServerSocket(0);
-      gui.setPortNumber(gui.serverSocket.getLocalPort());
+      server.serverSocket = new ServerSocket(0);
+      server.setPortNumber(server.serverSocket.getLocalPort());
 
       System.out.println ("Connection Socket Created");
-      System.out.println (String.format("Server address: %s", gui.getHostAddress()));
-      System.out.println (String.format("Port number: %d", gui.getPortNumber()));
+      System.out.println (String.format("Server address: %s", server.getHostAddress()));
+      System.out.println (String.format("Port number: %d", server.getPortNumber()));
 
       try { 
-        while (gui.serverContinue) {
+        while (server.serverContinue) {
           System.out.println ("Waiting for Connection");
-          new CommunicationThread (gui.serverSocket.accept(), gui, gui.connectedClients);
+          new CommunicationThread (server.serverSocket.accept(), server, server.connectedClients);
         }
       } catch (IOException e) {
         System.err.println("Accept failed.");
         System.exit(1);
       } 
     } catch (IOException e) {
-      System.err.println( String.format("Could not listen on port: %d", gui.getPortNumber()) );
+      System.err.println( String.format("Could not listen on port: %d", server.getPortNumber()) );
       System.exit(1);
     } finally {
       try {
-        gui.serverSocket.close();
+        server.serverSocket.close();
       } catch (IOException e) {
-      System.err.println( String.format("Could not close port: %d", gui.getPortNumber()) );
+        System.err.println( String.format("Could not close port: %d", server.getPortNumber()) );
         System.exit(1);
       }
     }
@@ -143,16 +146,14 @@ class CommunicationThread extends Thread
 {
   //private boolean serverContinue = true;
   private Socket clientSocket;
-  private Server gui;
+  private Server server;
   private ClientsList connectedClients;
 
-  public CommunicationThread (Socket clientSoc, Server ec3, 
-      ClientsList clients)
+  public CommunicationThread(Socket sock, Server s, ClientsList clients)
   {
-    clientSocket = clientSoc;
-    gui = ec3;
+    clientSocket = sock;
+    server = s;
     connectedClients = clients;
-    //gui.history.insert ("Comminucating with Port" + clientSocket.getLocalPort()+"\n", 0);
     start();
   }
 
@@ -160,44 +161,53 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
+    // TODO: need to receive a message from new client to get its info (name, key)
+    // TODO: need to send new client's info to other clients
+
+    String clientName = null;
+
     try {
-      PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), 
-          true); 
-	  Crypt_RSA a = new Crypt_RSA();
+      ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream()); 
+      Crypt_RSA a = new Crypt_RSA();
       Keys k = a.makeKeys(256201021L, 256203161L);
-	  Client cl = new Client(clientSocket, "Nameeee", k);
+
+      Client cl = new Client(clientSocket, clientName, k);
       connectedClients.add(cl);
 
-      BufferedReader in = new BufferedReader( 
-          new InputStreamReader( clientSocket.getInputStream())); 
+      ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
 
-      String inputLine;  
+      Packet<ArrayList<BigInteger>> clientMessage;
 
-      while ((inputLine = in.readLine()) != null) {
-        System.out.println ("Input: " + inputLine); 
-        //gui.history.insert (inputLine+"\n", 0);
+      while ( (clientMessage = (Packet) in.readObject()).isEmpty() ) {
+        //System.out.println ("Input: " + inputLine);
 
-        // TODO: send to target clients only
-        // Loop through the connectedClients and send to all "active" streams
-        for (Client c: connectedClients.clients) {
+        // TODO: send to specified clients only
+        for (int i = 0; i < connectedClients.getSize(); i++) {
           System.out.println ("Sending Message");
-          c.getOutStream().getOutputStream().write(inputLine.getBytes(Charset.forName("UTF-8")));
+
+          Client client = connectedClients.get(i);
+
+          // TODO: send a Packet object
+          //client.getOutStream().print(inputLine.getBytes(Charset.forName("UTF-8")));
         }
 
-        if (inputLine.equals("Bye")) 
-          break; 
+        //if (inputLine.equals("Bye"))
+          //break;
 
-        if (inputLine.equals("End Server")) 
-          gui.serverContinue = false; 
+        //if (inputLine.equals("End Server"))
+          //server.serverContinue = false;
       } 
 
-      connectedClients.clients.remove(cl);
+      connectedClients.remove(cl.getName());
       out.close(); 
       in.close(); 
       clientSocket.close(); 
     } catch (IOException e) {
       System.err.println("Problem with Communication Server");
-      //System.exit(1); 
+      //System.exit(1);
+    } catch (ClassNotFoundException e) {
+      System.err.println("Problem with packet received");
+      //System.exit(1);
     }
   }
 }
