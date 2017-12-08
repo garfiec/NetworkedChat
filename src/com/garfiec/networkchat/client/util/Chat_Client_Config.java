@@ -13,6 +13,7 @@ public class Chat_Client_Config {
     public Chat_Client_Config() {
         // Generate random primes as default
         setCipherPrimes(0, 0);
+        primalityTest(101);
     }
 
     // Todo
@@ -21,6 +22,7 @@ public class Chat_Client_Config {
         if (p == 0 && q == 0) {
             // Todo: Generate primes
             // https://crypto.stackexchange.com/questions/71/how-can-i-generate-large-prime-numbers-for-rsa
+
             return true;
         }
 
@@ -40,12 +42,36 @@ public class Chat_Client_Config {
             return false;
         }
 
-        // Todo: Check if numbers are prime
-
+        // Check if numbers are prime
+        if (!primalityTest(p) || !primalityTest(q)) {
+            return false;
+        }
 
         // Valid input. Success
         this.cipher_p = p;
         this.cipher_q = q;
+
+        return true;
+    }
+
+    private boolean primalityTest(long num) {
+        // Using trial division primality test specified below
+        // https://en.wikipedia.org/wiki/Primality_test
+
+        // We know that it shouldn't be divisible by 2
+        if (num % 2 == 0) {
+            return false;
+        }
+
+        long divisorMax = (long) Math.sqrt(num);
+
+        // Since we already checked divisibility by 2, we an skip even divisors
+        for (int i = 3; i <= divisorMax; i+= 2) {
+            if (num % i == 0) {
+                // Factor found
+                return false;
+            }
+        }
 
         return true;
     }
