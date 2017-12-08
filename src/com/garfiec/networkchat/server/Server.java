@@ -161,18 +161,20 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
+    Packet<Keys> newClientInfo = null;
     ObjectInputStream in = null;
     ObjectOutputStream out = null;
     String clientName = null;
+    Keys clientKey = null;
 
-    // TODO: need to receive a message from new client to get its info (name, key)
-
+    // Receive a message from new client to get its info (name, key)
     try {
       in = new ObjectInputStream(clientSocket.getInputStream()); 
       out = new ObjectOutputStream(clientSocket.getOutputStream()); 
-      Packet<Keys> newClientInfo = (Packet) in.readObject();
       
+      newClientInfo = (Packet) in.readObject();
       clientName = newClientInfo.getName(0);
+      clientKey = newClientInfo.getMessage(0);
 
       // Client name is already taken
       if ( connectedClients.contains(clientName) ) {
@@ -196,15 +198,16 @@ class CommunicationThread extends Thread
       System.err.println("Problem with packet received");
     }
 
-    // TODO: need to send new client's info to other clients
+    // Send new client's info to other clients
+    Client newClient = new Client(clientSocket, clientName, clientKey);
+    connectedClients.add(newClient);
+
+    for (int i = 0; i < connectedClients.getSize(); i++) {
+      Client client = connectedClients.get(i);
+      client.sendKey(newClientInfo);
+    }
 
     try {
-      Crypt_RSA a = new Crypt_RSA();
-      Keys k = a.makeKeys(256201021L, 256203161L);
-
-      Client cl = new Client(clientSocket, clientName, k);
-      connectedClients.add(cl);
-
       Packet<ArrayList<BigInteger>> clientMessage;
 
       while ( !(clientMessage = (Packet)in.readObject()).isEmpty() ) {
@@ -223,7 +226,7 @@ class CommunicationThread extends Thread
         }
       } 
 
-      connectedClients.remove(cl.getName());
+      connectedClients.remove(clientName);
       out.close(); 
       in.close(); 
       clientSocket.close(); 

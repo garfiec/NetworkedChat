@@ -80,7 +80,11 @@ public class Client
    */
   public void sendMessage(Packet<ArrayList<BigInteger>> data)
   {
-    // TODO send a packet of a client's encrypted message
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+      out.writeObject(data);
+    } catch (IOException e) {
+    }
   }
 
   /**
@@ -89,7 +93,11 @@ public class Client
    */
   public void sendKey(Packet<Keys> data)
   {
-    // TODO send a packet of a new client's (name,key)
+    try {
+      ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
+      out.writeObject(data);
+    } catch (IOException e) {
+    }
   }
 }
 
