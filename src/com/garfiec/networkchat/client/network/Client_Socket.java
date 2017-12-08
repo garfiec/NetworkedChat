@@ -16,9 +16,9 @@ public class Client_Socket {
 	public String machineName;
 	public int portNum;
 
-	private ObjectOutputStream out;
-	private ObjectInputStream in;
-	private Socket sock;
+	public ObjectOutputStream out;
+	public ObjectInputStream in;
+	public Socket sock;
 
 	public Client_Socket(String machineName, int portNum, Chat_Client client) {
 		this.client = client;
@@ -63,12 +63,13 @@ public class Client_Socket {
 	}
 
 	public void listen() {
-		new CommunicationReadThread(in);
+		new CommunicationReadThread(this);
 	}
 
 	public boolean connect() {
 		try {
 			sock = new Socket(machineName, portNum);
+			this.sock = sock;
 			out = new ObjectOutputStream(sock.getOutputStream());
 			in = new ObjectInputStream(sock.getInputStream());
 		} catch (NumberFormatException e) {
@@ -87,9 +88,10 @@ public class Client_Socket {
 
 class CommunicationReadThread extends Thread
 {
-  private ObjectInputStream in;
+  private Client_Socket in;
+  private ObjectInputStream is;
 
-  public CommunicationReadThread (ObjectInputStream inparam)
+  public CommunicationReadThread (Client_Socket inparam)
   {
     in = inparam;
     start();
@@ -100,18 +102,20 @@ class CommunicationReadThread extends Thread
     System.out.println ("Client is listening to server for messages");
 
     try {
+      is = new ObjectInputStream(in.sock.getInputStream());
       Packet<ArrayList<BigInteger>> inputLine;
 
-      while ((inputLine = (Packet) in.readObject()) != null)
+      while ((inputLine = (Packet) is.readObject()) != null)
       {
         System.out.println ("Client received a packet from someone!");
       }
 	  System.out.println("Something went wrong. We disconnected"); 
-	  in.close();
+	  is.close();
     }
     catch (IOException e)
     {
-      System.err.println("Client encountered problem while reading");
+      System.err.println("Client encountered problem while reading"+e);
+	  e.printStackTrace();
     }
     catch (ClassNotFoundException e) {
 	}
