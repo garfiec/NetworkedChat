@@ -136,7 +136,6 @@ public class Client_Display extends JFrame {
         // List of Connected Users
         JPanel list_panel = new JPanel(new BorderLayout());
         this.users_list = new JList();
-        this.users_list.setSelectionMode(ListSelectionModel.SINGLE_INTERVAL_SELECTION);
         JScrollPane user_list_scroll = new JScrollPane(this.users_list);
         list_panel.add(user_list_scroll, BorderLayout.CENTER);
 
@@ -171,7 +170,7 @@ public class Client_Display extends JFrame {
         user_message = new JTextField();
         user_message.addActionListener(e -> {
             if (!e.getActionCommand().equals("")) {
-                this.client.sendMessage(e.getActionCommand());
+                this.client.sendMessage(e.getActionCommand(), new ArrayList<>(users_list.getSelectedValuesList()));
             }
             user_message.setText("");
         });

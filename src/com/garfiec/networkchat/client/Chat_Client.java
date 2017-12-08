@@ -14,12 +14,17 @@ public class Chat_Client {
 
     public Crypt_RSA               rsa_cipher;
 
-    private HashMap<String, Client_Socket> users;
+    public Client_Socket socket = null;
+    private HashMap<String, Crypt_RSA.Keys> users;
 
     public Chat_Client() {
         settings = new Chat_Client_Config();
         gui = new Client_Display(this, settings);
 		rsa_cipher = new Crypt_RSA();
+    }
+
+    public void setSocket(Client_Socket socket) {
+        this.socket = socket;
     }
 
     // Todo: Data received from socket
@@ -48,6 +53,11 @@ public class Chat_Client {
 
     // Todo: Send data to server
     private boolean sendPayload() {
+        if (this.socket == null) {
+            return false;
+        }
+
+//        this.socket.sendMessage();
         // Todo: Find clients to send to
         // Todo: Encrypt data
         // Todo: Transmit data
@@ -55,7 +65,7 @@ public class Chat_Client {
     }
 
     // Todo: UI hook to send chat message
-    public void sendMessage(String msg) {
+    public void sendMessage(String msg, ArrayList<String> selected_names) {
         System.out.println("Application received message: " + msg);
         sendPayload();
     }

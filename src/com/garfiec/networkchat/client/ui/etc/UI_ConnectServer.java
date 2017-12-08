@@ -196,18 +196,21 @@ public class UI_ConnectServer extends JFrame {
             else {
 
             }
-            String ip = server_ip_input.getText();
-            int port = Integer.parseInt(server_port_input.getText());
-            System.out.println(String.format("Got %s and %s", ip, port));
 
-            Client_Socket sock = new Client_Socket(ip, port, this.client);
-            sock.connect();
+            Client_Socket sock = new Client_Socket(this.settings.server_ip, this.settings.port, this.client);
+            if (!sock.connect()) {
+                // Failed to connect to server
+                return;
+            }
+
 			if (sock.sendKey(user_name_input.getText(), client.rsa_cipher.makeKeys(this.settings.cipher_p, this.settings.cipher_q))) {
 				System.out.println("We connected!");
 				sock.listen();
 			} else {
 				System.out.println("Didnt connect.. Invalid name?");
 			}
+
+            this.client.setSocket(sock);
 
         }
         catch (Exception er) {
