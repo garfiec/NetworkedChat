@@ -46,7 +46,7 @@ public class Client_Socket {
 		}
 	}
 
-	public void sendMessage(ArrayList<BigInteger> data) {
+	public void sendMessage(String msg, HashMap<String, Keys> users) {
 		Packet packet = new Packet(2);
 		for (Map.Entry<String, Keys> user: users.entrySet()) {
  		    String uname = user.getKey();

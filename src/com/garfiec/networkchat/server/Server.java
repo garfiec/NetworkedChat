@@ -161,7 +161,7 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
-    Packet<Keys> newClientInfo = null;
+    Packet newClientInfo = null;
     ObjectInputStream in = null;
     ObjectOutputStream out = null;
     String clientName = null;
@@ -175,15 +175,15 @@ class CommunicationThread extends Thread
       newClientInfo = (Packet) in.readObject();
       clientName = newClientInfo.getName(0);
       System.out.println("received from "+clientName);
-      clientKey = newClientInfo.getMessage(0);
+      clientKey = newClientInfo.getKey(0);
 
       // Client name is already taken
       if ( connectedClients.contains(clientName) ) {
-        out.writeObject( new Packet<Keys>(-1) );
+        out.writeObject( new Packet(-1) );
         return;
       }
 
-      Packet<Keys> data = new Packet<>(0);
+      Packet data = new Packet(0);
 
       for (int i = 0; i < connectedClients.getSize(); i++) {
         Client client = connectedClients.get(i);
@@ -210,9 +210,9 @@ class CommunicationThread extends Thread
     }
 
     try {
-      Packet<ArrayList<BigInteger>> clientMessage;
+      Packet clientMessage;
 
-      while ( !(clientMessage = (Packet)in.readObject()).isEmpty() ) {
+      while ( (clientMessage = (Packet)in.readObject()) != null) {
         // Send to specified clients only
         for (int i = 0; i < clientMessage.getSize(); i++) {
           String target = clientMessage.getName(i);
@@ -220,7 +220,7 @@ class CommunicationThread extends Thread
 
           System.out.println ("Sending Message");
 
-          Packet<ArrayList<BigInteger>> sendData = new Packet<>(1);
+          Packet sendData = new Packet(2);
           sendData.add(target, message);
 
           Client client = connectedClients.get(target);
@@ -235,7 +235,7 @@ class CommunicationThread extends Thread
       if ( connectedClients.contains(clientName) ) {
         connectedClients.remove(clientName);
 
-        Packet<Keys> updateClients = new Packet<>(1);
+        Packet updateClients = new Packet(2);
 
         for (int i = 0; i < connectedClients.getSize(); i++) {
           Client client = connectedClients.get(i);

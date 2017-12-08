@@ -78,7 +78,7 @@ public class Client
    *  @brief Sends a data packet
    *  @param Packet<ArrayList<BigInteger>> message to send
    */
-  public void sendMessage(Packet<ArrayList<BigInteger>> data)
+  public void sendMessage(Packet data)
   {
     try {
       ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
@@ -91,7 +91,7 @@ public class Client
    *  @brief Sends a data packet
    *  @param Packet<Keys> new client info to send
    */
-  public void sendKey(Packet<Keys> data)
+  public void sendKey(Packet data)
   {
     try {
       ObjectOutputStream out = new ObjectOutputStream(socket.getOutputStream());
