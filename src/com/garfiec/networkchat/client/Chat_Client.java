@@ -4,6 +4,7 @@ import com.garfiec.networkchat.client.network.Client_Socket;
 import com.garfiec.networkchat.client.ui.Client_Display;
 import com.garfiec.networkchat.client.util.Chat_Client_Config;
 import com.garfiec.networkchat.common.Crypt_RSA;
+import com.garfiec.networkchat.server.Tuple;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +26,17 @@ public class Chat_Client {
 
     public void setSocket(Client_Socket socket) {
         this.socket = socket;
+    }
+
+    public void updateUsersList(ArrayList<Tuple<String, Crypt_RSA.Keys>> users) {
+        ArrayList<String> user_name_list = new ArrayList<>();
+
+        for (Tuple<String, Crypt_RSA.Keys> user : users) {
+            this.users.put(user.getFirst(), user.getSecond());
+            user_name_list.add(user.getFirst());
+        }
+
+        gui.updateUsers(user_name_list);
     }
 
     // Todo: Data received from socket
