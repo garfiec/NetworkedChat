@@ -161,45 +161,72 @@ class CommunicationThread extends Thread
   {
     System.out.println ("New Communication Thread Started");
 
-    // TODO: need to receive a message from new client to get its info (name, key)
-    // TODO: need to send new client's info to other clients
-
+    Packet<Keys> newClientInfo = null;
+    ObjectInputStream in = null;
+    ObjectOutputStream out = null;
     String clientName = null;
+    Keys clientKey = null;
+
+    // Receive a message from new client to get its info (name, key)
+    try {
+      in = new ObjectInputStream(clientSocket.getInputStream()); 
+      out = new ObjectOutputStream(clientSocket.getOutputStream()); 
+      
+      newClientInfo = (Packet) in.readObject();
+      clientName = newClientInfo.getName(0);
+      clientKey = newClientInfo.getMessage(0);
+
+      // Client name is already taken
+      if ( connectedClients.contains(clientName) ) {
+        out.writeObject( new Packet<Keys>(-1) );
+        return;
+      }
+
+      Packet<Keys> data = new Packet<>(0);
+
+      for (int i = 0; i < connectedClients.getSize(); i++) {
+        Client client = connectedClients.get(i);
+        
+        data.add(client.getName(), client.getKey());
+      }
+
+      // Send client the list of connected clients
+      out.writeObject(data);
+    } catch (IOException e) {
+      System.err.println("ERROR receiving client info");
+    } catch (ClassNotFoundException e) {
+      System.err.println("Problem with packet received");
+    }
+
+    // Send new client's info to other clients
+    Client newClient = new Client(clientSocket, clientName, clientKey);
+    connectedClients.add(newClient);
+
+    for (int i = 0; i < connectedClients.getSize(); i++) {
+      Client client = connectedClients.get(i);
+      client.sendKey(newClientInfo);
+    }
 
     try {
-      ObjectOutputStream out = new ObjectOutputStream(clientSocket.getOutputStream()); 
-      Crypt_RSA a = new Crypt_RSA();
-      Keys k = a.makeKeys(256201021L, 256203161L);
+      Packet<ArrayList<BigInteger>> clientMessage;
 
-      Client cl = new Client(clientSocket, clientName, k);
-      connectedClients.add(cl);
+      while ( !(clientMessage = (Packet)in.readObject()).isEmpty() ) {
+        // Send to specified clients only
+        for (int i = 0; i < clientMessage.getSize(); i++) {
+          String target = clientMessage.getName(i);
+          ArrayList<BigInteger> message = clientMessage.getMessage(i);
 
-      ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
-
-//      Packet<ArrayList<BigInteger>> clientMessage;
-      String clientMessage;
-
-      while ( !(clientMessage = (String) in.readObject()).isEmpty() ) {
-        System.out.println ("Input: " + clientMessage);
-
-        // TODO: send to specified clients only
-        for (int i = 0; i < connectedClients.getSize(); i++) {
           System.out.println ("Sending Message");
 
-          Client client = connectedClients.get(i);
+          Packet<ArrayList<BigInteger>> sendData = new Packet<>(1);
+          sendData.add(target, message);
 
-          // TODO: send a Packet object
-          //client.getOutStream().print(inputLine.getBytes(Charset.forName("UTF-8")));
+          Client client = connectedClients.get(target);
+          client.sendMessage(sendData);
         }
-
-        //if (inputLine.equals("Bye"))
-          //break;
-
-        //if (inputLine.equals("End Server"))
-          //server.serverContinue = false;
       } 
 
-      connectedClients.remove(cl.getName());
+      connectedClients.remove(clientName);
       out.close(); 
       in.close(); 
       clientSocket.close(); 
@@ -209,7 +236,6 @@ class CommunicationThread extends Thread
       //System.exit(1);
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
-      //System.exit(1);
     }
   }
 }

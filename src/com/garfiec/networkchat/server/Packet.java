@@ -14,7 +14,7 @@ import java.util.List;
 import java.math.BigInteger;
 import java.io.Serializable;
 
-public class Packet<T> implements Serializable
+public class Packet<T extends Serializable> implements Serializable
 {
   private ArrayList< Tuple<String, T> > data;
   private int packetType;
@@ -58,6 +58,15 @@ public class Packet<T> implements Serializable
   }
 
   /**
+   *  @brief Getter for number of elements in packet
+   *  @return int elements in packet
+   */
+  public int getSize()
+  {
+    return data.size();
+  }
+
+  /**
    *  @brief Checks if packet is empty
    *  @return boolean is empty
    */
@@ -71,9 +80,9 @@ public class Packet<T> implements Serializable
    *  @param String name
    *  @param T message
    */
-  public void add(String name, T message)
+  public void add(String name, T newData)
   {
-    data.add( new Tuple<String, T>(name, message) );
+    data.add( new Tuple<String, T>(name, newData) );
   }
 
   /**

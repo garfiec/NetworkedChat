@@ -18,7 +18,7 @@ import java.io.Serializable;
  *  data structure. The tuple components (First & Second)
  *  are immutable.
 */
-public class Tuple<F, S> implements Serializable
+public class Tuple<F extends Serializable, S extends Serializable> implements Serializable
 {
   private final F first;  ///< First element of type F
   private final S second; ///< Second element of type S
