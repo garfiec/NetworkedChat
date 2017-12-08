@@ -48,6 +48,7 @@ public class Chat_Client {
 
     // Todo: Send data to server
     private boolean sendPayload() {
+        // Todo: Find clients to send to
         // Todo: Encrypt data
         // Todo: Transmit data
         return false;

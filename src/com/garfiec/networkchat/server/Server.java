@@ -9,6 +9,7 @@
 
 package com.garfiec.networkchat.server;
 
+import java.math.BigInteger;
 import java.net.*; 
 import java.io.*; 
 import java.awt.*;
@@ -175,9 +176,9 @@ class CommunicationThread extends Thread
 
       ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
 
-      Packet clientMessage;  
+      Packet<ArrayList<BigInteger>> clientMessage;
 
-      while ( (clientMessage = in.readObject()).isEmpty() ) {
+      while ( (clientMessage = (Packet) in.readObject()).isEmpty() ) {
         //System.out.println ("Input: " + inputLine);
 
         // TODO: send to specified clients only
@@ -190,11 +191,11 @@ class CommunicationThread extends Thread
           //client.getOutStream().print(inputLine.getBytes(Charset.forName("UTF-8")));
         }
 
-        if (inputLine.equals("Bye")) 
-          break; 
+        //if (inputLine.equals("Bye"))
+          //break;
 
-        if (inputLine.equals("End Server")) 
-          server.serverContinue = false; 
+        //if (inputLine.equals("End Server"))
+          //server.serverContinue = false;
       } 
 
       connectedClients.remove(cl.getName());
@@ -203,7 +204,10 @@ class CommunicationThread extends Thread
       clientSocket.close(); 
     } catch (IOException e) {
       System.err.println("Problem with Communication Server");
-      //System.exit(1); 
+      //System.exit(1);
+    } catch (ClassNotFoundException e) {
+      System.err.println("Problem with packet received");
+      //System.exit(1);
     }
   }
 }
