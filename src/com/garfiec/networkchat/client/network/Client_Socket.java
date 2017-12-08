@@ -27,16 +27,17 @@ public class Client_Socket {
 	}
 
 	public boolean sendKey(String name, Keys k) {
-		Packet<Keys> pack = new Packet<Keys>(1);
+		Packet pack = new Packet(1);
 		pack.add("Andrijko", k);
 		try {
 			System.out.println("here2");
 			out.writeObject(pack);
-			Packet<Keys> result = (Packet)in.readObject();
+			Packet result = (Packet)in.readObject();
 			if (result.getType() == -1) {
 				System.out.println("errored but fine");
 				return false;
 			}
+			// use result to update client list
 			System.out.println("No error. We gucci");
 			return true;
 		} catch (Exception e) {
@@ -45,8 +46,8 @@ public class Client_Socket {
 		}
 	}
 
-	public void sendMessage(String msg, HashMap<String, Keys> users) {
-		Packet<ArrayList<BigInteger>> packet = new Packet<ArrayList<BigInteger>>(2);
+	public void sendMessage(ArrayList<BigInteger> data) {
+		Packet packet = new Packet(2);
 		for (Map.Entry<String, Keys> user: users.entrySet()) {
  		    String uname = user.getKey();
     		Keys key = user.getValue();
@@ -103,11 +104,18 @@ class CommunicationReadThread extends Thread
 
     try {
       is = new ObjectInputStream(in.sock.getInputStream());
-      Packet<ArrayList<BigInteger>> inputLine;
+      Packet inputLine;
 
       while ((inputLine = (Packet) is.readObject()) != null)
       {
-        System.out.println ("Client received a packet from someone!");
+	  	int type = inputLine.getType();
+		if (type == 1) {
+			System.out.println("Client received updated list");
+		} else if (type == 2) {
+        	System.out.println("Client received a packet from someone!");
+		} else if (type == -1) {
+			System.out.println("Client received error");		
+		}
       }
 	  System.out.println("Something went wrong. We disconnected"); 
 	  is.close();
