@@ -8,6 +8,7 @@ import com.garfiec.networkchat.client.util.Chat_Client_Config;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowEvent;
 
 public class UI_ConnectServer extends JFrame {
     private  Chat_Client client;
@@ -204,13 +205,15 @@ public class UI_ConnectServer extends JFrame {
             }
 
 			if (sock.sendKey(user_name_input.getText(), client.rsa_cipher.makeKeys(this.settings.cipher_p, this.settings.cipher_q))) {
-				System.out.println("We connected!");
 				sock.listen();
-			} else {
-				System.out.println("Didnt connect.. Invalid name?");
-			}
+            } else {
+                JOptionPane.showMessageDialog(this, "Didn't connect.. Invalid name?");
+                return;
+            }
 
             this.client.setSocket(sock);
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+            JOptionPane.showMessageDialog(this, "We connected!");
 
         }
         catch (Exception er) {
