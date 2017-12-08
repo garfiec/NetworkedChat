@@ -1,35 +1,36 @@
 package com.garfiec.networkchat.client.util;
 
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class Chat_Client_Config {
     // Storage for settings related to client program
     public String   server_ip   = "127.0.0.1";
     public int      port        = 9000;
 
-    public long cipher_p;
-    public long cipher_q;
+    public long cipher_p = 0;
+    public long cipher_q = 0;
 
     public String user_name = "Guest";
 
-    private ArrayList<Integer> prime_list;
+    private ArrayList<Long> prime_list;
 
     public Chat_Client_Config() {
         // Generate random primes as default
+        prime_list = new ArrayList<>();
+        readPrimesFile();
         setCipherPrimes(0, 0);
-        primalityTest(101);
     }
 
     // Todo
     public boolean setCipherPrimes(long p, long q) {
         // Check if p, q = 0
         if (p == 0 && q == 0) {
-            // Todo: Generate primes
-            // https://crypto.stackexchange.com/questions/71/how-can-i-generate-large-prime-numbers-for-rsa
-//            InputStream stream = this.getClass().getClassLoader().getResourceAsStream("/com/garfiec/common/etc/primes.rsc");
-//            System.out.println(stream != null);
+            this.cipher_p = prime_list.get(ThreadLocalRandom.current().nextInt(0, prime_list.size()));
+            do {
+                this.cipher_q = prime_list.get(ThreadLocalRandom.current().nextInt(0, prime_list.size()));
+            } while (this.cipher_p == this.cipher_q);
 
             return true;
         }
@@ -82,5 +83,19 @@ public class Chat_Client_Config {
         }
 
         return true;
+    }
+
+    private void readPrimesFile() {
+        InputStream stream = this.getClass().getResourceAsStream("/com/garfiec/networkchat/common/etc/primes.rsc");
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(stream, "utf-8"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                prime_list.add(Long.parseLong(line));
+            }
+        }
+        catch (Exception e) {
+        }
     }
 }
