@@ -7,8 +7,6 @@ import com.garfiec.networkchat.client.util.Chat_Client_Config;
 import javax.swing.*;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -19,7 +17,7 @@ public class Client_Display extends JFrame {
     private Chat_Client_Config settings;
 
     private JList      users_list;
-    private JTextField user_name_input;
+    private JLabel     user_name_label;
     private JTextArea  community_messages;
     private JTextField user_message;
     private JLabel     statusLabel;
@@ -46,7 +44,7 @@ public class Client_Display extends JFrame {
 
     private void resetUIElements() {
         this.updateUsers(new ArrayList<>());
-        this.user_name_input.setText(this.settings.user_name);
+        this.updateName();
         this.clearChat();
         this.setStatus("Disconnected");
         this.enter_msg_helper = true;
@@ -155,26 +153,8 @@ public class Client_Display extends JFrame {
         // User name
         JPanel name_panel = new JPanel(new BorderLayout());
         name_panel.setBorder(UI_Constants.VERTICAL_PADDING);
-        JLabel user_name_label = new JLabel("Name ");
-        user_name_input = new JTextField(settings.user_name);
-        user_name_input.getDocument().addDocumentListener(new DocumentListener() {
-            @Override
-            public void insertUpdate(DocumentEvent e) {
-                settings.user_name = user_name_input.getText();
-            }
-
-            @Override
-            public void removeUpdate(DocumentEvent e) {
-                settings.user_name = user_name_input.getText();
-            }
-
-            @Override
-            public void changedUpdate(DocumentEvent e) {
-                settings.user_name = user_name_input.getText();
-            }
-        });
+        user_name_label = new JLabel("Name ");
         name_panel.add(user_name_label, BorderLayout.WEST);
-        name_panel.add(user_name_input, BorderLayout.CENTER);
 
         // Community Messages
         JPanel community_messages_panel = new JPanel(new BorderLayout());
@@ -223,6 +203,10 @@ public class Client_Display extends JFrame {
         panel.add(community_messages_panel, BorderLayout.CENTER);
         panel.add(input_panel, BorderLayout.SOUTH);
         return panel;
+    }
+
+    public void updateName() {
+        this.user_name_label.setText("<html><h3>" + this.settings.user_name + "</h3></html>");
     }
 
     public void messageBox(String msg) {
