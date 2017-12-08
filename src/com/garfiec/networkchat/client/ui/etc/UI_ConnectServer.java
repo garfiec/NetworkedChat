@@ -1,5 +1,7 @@
 package com.garfiec.networkchat.client.ui.etc;
 
+import com.garfiec.networkchat.client.Chat_Client;
+import com.garfiec.networkchat.client.network.Client_Socket;
 import com.garfiec.networkchat.client.ui.UI_Constants;
 import com.garfiec.networkchat.client.ui.UI_Strings;
 import com.garfiec.networkchat.client.util.Chat_Client_Config;
@@ -8,6 +10,7 @@ import javax.swing.*;
 import java.awt.*;
 
 public class UI_ConnectServer extends JFrame {
+    private  Chat_Client client;
     private Chat_Client_Config settings;
 
     private JTextField user_name_input;
@@ -18,8 +21,9 @@ public class UI_ConnectServer extends JFrame {
     private JTextField cipher_p_input;
     private JTextField cipher_q_input;
 
-    public UI_ConnectServer(Chat_Client_Config settings) {
+    public UI_ConnectServer(Chat_Client client, Chat_Client_Config settings) {
         super("Connection Settings");
+        this.client = client;
         this.settings = settings;
         getContentPane().setLayout(new BorderLayout());
 
@@ -150,11 +154,7 @@ public class UI_ConnectServer extends JFrame {
         JPanel connect_server_panel = new JPanel(new BorderLayout());
         connect_server_panel.setBorder(UI_Constants.RIGHT_PADDING);
         JButton connect_server_bttn = new JButton("Connect to Server");
-        connect_server_bttn.addActionListener(e -> {
-			String ip = server_ip_input.getText();
-			String port = server_port_input.getText();
-			System.out.println(String.format("Got %s and %s", ip, port));
-        });
+        connect_server_bttn.addActionListener(e -> connectServer());
         connect_server_panel.add(connect_server_bttn);
 
         /////////////////////////////////////////
@@ -180,5 +180,33 @@ public class UI_ConnectServer extends JFrame {
         layout.putConstraint(SpringLayout.EAST, connect_server_panel, UI_Constants.STD_PAD, SpringLayout.EAST, panel);
 
         return panel;
+    }
+
+    private void connectServer() {
+        this.settings.server_ip = server_ip_input.getText();
+        this.settings.port      = Integer.parseInt(server_port_input.getText());
+        this.settings.user_name = user_name_input.getText();
+
+        try {
+
+            boolean worked = settings.setCipherPrimes(Long.parseLong(cipher_p_input.getText()), Long.parseLong(cipher_q_input.getText()));
+            if (!worked) {
+                System.out.println("Invalid p / q");
+            }
+            else {
+
+            }
+            String ip = server_ip_input.getText();
+            int port = Integer.parseInt(server_port_input.getText());
+            System.out.println(String.format("Got %s and %s", ip, port));
+
+            Client_Socket sock = new Client_Socket(ip, port, this.client);
+            sock.connect();
+
+            sock.sendMessage("sdf");
+        }
+        catch (Exception er) {
+            System.out.println("Try again");
+        }
     }
 }

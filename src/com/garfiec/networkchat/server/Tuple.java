@@ -9,6 +9,8 @@
 
 package com.garfiec.networkchat.server;
 
+import java.io.Serializable;
+
 /**
  *  @brief Tuple class
  *
@@ -16,7 +18,7 @@ package com.garfiec.networkchat.server;
  *  data structure. The tuple components (First & Second)
  *  are immutable.
 */
-public class Tuple<F, S>
+public class Tuple<F, S> implements Serializable
 {
   private final F first;  ///< First element of type F
   private final S second; ///< Second element of type S

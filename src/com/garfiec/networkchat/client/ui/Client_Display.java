@@ -67,7 +67,7 @@ public class Client_Display extends JFrame {
         menuBar.add(menu);
 
         menuItem = new JMenuItem("Connect to Server");
-        menuItem.addActionListener(e -> new JDialog(new UI_ConnectServer(settings)));
+        menuItem.addActionListener(e -> new JDialog(new UI_ConnectServer(client, settings)));
         menu.add(menuItem);
 
         menu.addSeparator();

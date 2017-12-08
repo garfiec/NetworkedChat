@@ -176,10 +176,11 @@ class CommunicationThread extends Thread
 
       ObjectInputStream in = new ObjectInputStream(clientSocket.getInputStream()); 
 
-      Packet<ArrayList<BigInteger>> clientMessage;
+//      Packet<ArrayList<BigInteger>> clientMessage;
+      String clientMessage;
 
-      while ( (clientMessage = (Packet) in.readObject()).isEmpty() ) {
-        //System.out.println ("Input: " + inputLine);
+      while ( (clientMessage = (String) in.readObject()).isEmpty() ) {
+        System.out.println ("Input: " + clientMessage);
 
         // TODO: send to specified clients only
         for (int i = 0; i < connectedClients.getSize(); i++) {
@@ -203,7 +204,8 @@ class CommunicationThread extends Thread
       in.close(); 
       clientSocket.close(); 
     } catch (IOException e) {
-      System.err.println("Problem with Communication Server");
+      System.err.println("Problem with Communication Server"+e);
+      e.printStackTrace();
       //System.exit(1);
     } catch (ClassNotFoundException e) {
       System.err.println("Problem with packet received");
